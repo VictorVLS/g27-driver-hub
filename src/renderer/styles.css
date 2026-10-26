@@ -264,7 +264,7 @@ main { flex: 1; overflow-y: auto; position: relative; }
 .gauge-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
 .gauge { width: 320px; max-width: 100%; }
 .g-track { stroke: var(--line2); stroke-width: 14; }
-.g-fill { stroke: var(--accent); stroke-width: 14; filter: drop-shadow(0 0 6px rgba(0,184,252,.6)); transition: stroke-dashoffset .2s; }
+.g-fill { stroke: var(--accent); stroke-width: 14; stroke-linecap: butt; filter: drop-shadow(0 0 6px rgba(0,184,252,.6)); transition: stroke-dasharray .2s; }
 .g-needle { stroke: #fff; stroke-width: 4; transform-origin: 120px 130px; transition: transform .08s linear; filter: drop-shadow(0 0 4px rgba(255,255,255,.6)); }
 .gauge-val { margin-top: -54px; font-size: 46px; font-weight: 750; font-variant-numeric: tabular-nums; }
 .gauge-val small { font-size: 22px; color: var(--muted); }

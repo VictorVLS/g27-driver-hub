@@ -101,22 +101,50 @@ try {
             }
         }
 
-        # WmFilter reads these when the wheel starts; without them it boots at 200°.
+        # WmFilter and WmHidLo read these when the wheel starts; WmHidLo sends
+        # WheelRange to the wheel, and without it the wheel boots at 200°.
         $params = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmFilter\Parameters\VID_046D&PID_C29B'
         New-Item -Path $params -Force | Out-Null
         if ($null -eq (Get-ItemProperty $params -Name OperatingRange -ErrorAction SilentlyContinue)) {
             New-ItemProperty -Path $params -Name OperatingRange -PropertyType DWord -Value 900 -Force | Out-Null
             New-ItemProperty -Path $params -Name CombinePedals -PropertyType DWord -Value 0 -Force | Out-Null
         }
-
-        Write-Output ('== ' + (L 'Reiniciando o volante' 'Restarting the wheel'))
-        Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match '^(USB|HID)\\VID_046D&PID_C29[4-9AB]' } | ForEach-Object {
-            pnputil /remove-device $_.InstanceId
+        $hidlo = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmHidLo\Parameters\VID_046D&PID_C29B'
+        New-Item -Path $hidlo -Force | Out-Null
+        if ($null -eq (Get-ItemProperty $hidlo -Name WheelRange -ErrorAction SilentlyContinue)) {
+            New-ItemProperty -Path $hidlo -Name WheelRange -PropertyType DWord -Value 900 -Force | Out-Null
         }
-        pnputil /scan-devices
-        Start-Sleep -Seconds 3
-        Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match 'VID_046D&PID_C29' } |
-            Format-Table FriendlyName, Status, InstanceId -AutoSize | Out-String -Width 200
+
+        # Installing the package can restart the wheel, which then re-enumerates
+        # twice (compatibility PID C294, then native C29B). Never remove it in
+        # the middle of that: wait for it to settle, restart only devices that
+        # report a problem, and rescan if it vanished.
+        Write-Output ('== ' + (L 'Aguardando o volante' 'Waiting for the wheel'))
+        $wheelDevices = { @(Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match '^(USB|HID)\\VID_046D&PID_C29[4-9AB]' }) }
+        $settled = $false
+        for ($i = 0; $i -lt 30 -and -not $settled; $i++) {
+            Start-Sleep -Seconds 1
+            $devs = & $wheelDevices
+            $settled = $devs.Count -ge 2 -and -not ($devs | Where-Object { $_.Status -ne 'OK' }) -and
+                       ($devs | Where-Object { $_.InstanceId -match 'PID_C29B' })
+            if ($i -eq 10 -and -not $devs.Count) { pnputil /scan-devices | Out-Null }
+        }
+        if (-not $settled) {
+            $devs = & $wheelDevices
+            if ($devs.Count) {
+                Write-Output ('== ' + (L 'Reiniciando o volante' 'Restarting the wheel'))
+                $devs | Where-Object { $_.Status -ne 'OK' } | ForEach-Object { pnputil /restart-device $_.InstanceId | Out-Null }
+            } else {
+                pnputil /scan-devices | Out-Null
+            }
+            Start-Sleep -Seconds 5
+        }
+        $devs = & $wheelDevices
+        if ($devs.Count) {
+            $devs | Format-Table FriendlyName, Status, InstanceId -AutoSize | Out-String -Width 200
+        } else {
+            Write-Output (L 'Volante não encontrado: desconecte e conecte o cabo USB do G27.' 'Wheel not found: unplug and replug the G27 USB cable.')
+        }
     }
     Write-Output (L 'Concluído.' 'Done.')
     $code = 0

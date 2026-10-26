@@ -10,6 +10,8 @@
 // WmFilter.sys reads, when the wheel starts,
 //   HKLM\SYSTEM\CurrentControlSet\Services\WmFilter\Parameters\VID_046D&PID_C29B
 // REG_DWORD CombinePedals (0/1) and OperatingRange (degrees, default 200, max 900).
+// WmHidLo.sys reads WheelRange (default 200) from its own Parameters key and
+// sends it to the wheel as the start-up rotation.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -18,6 +20,7 @@ const { execFile, spawn } = require('child_process');
 const DEVICE = 'VID_046D&PID_C29B';
 const USER_KEY = `HKEY_CURRENT_USER\\Software\\Logitech\\Gaming Software\\DriverSettings\\${DEVICE}`;
 const FILTER_KEY = `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WmFilter\\Parameters\\${DEVICE}`;
+const HIDLO_KEY = `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WmHidLo\\Parameters\\${DEVICE}`;
 
 const pct = (v) => Math.max(0, Math.min(15000, Math.round(v * 100)));
 const dword = (n) => `dword:${(n >>> 0).toString(16).padStart(8, '0')}`;
@@ -55,12 +58,11 @@ async function applyUser(s) {
 }
 
 // Writes the filter-driver values elevated (UAC) and restarts the wheel so
-// WmFilter re-reads them.
+// WmFilter and WmHidLo re-read them.
 function setFilterParams({ combinedPedals, range }) {
-  const text = regFile(FILTER_KEY, {
-    CombinePedals: combinedPedals ? 1 : 0,
-    OperatingRange: Math.max(40, Math.min(900, Math.round(range))),
-  });
+  const degrees = Math.max(40, Math.min(900, Math.round(range)));
+  const text = regFile(FILTER_KEY, { CombinePedals: combinedPedals ? 1 : 0, OperatingRange: degrees }) +
+    `\r\n[${HIDLO_KEY}]\r\n"WheelRange"=${dword(degrees)}\r\n`;
   const file = path.join(os.tmpdir(), `g27hub-filter-${Date.now()}.reg`);
   fs.writeFileSync(file, '﻿' + text, 'utf16le');
   const inner = [

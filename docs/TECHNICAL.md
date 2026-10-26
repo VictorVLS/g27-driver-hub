@@ -14,10 +14,18 @@ documented by the Linux `hid-lg4ff` driver.
 | --- | --- |
 | Leave compatibility mode (PID C294 → C29B) | `F8 0A 00 00 00 00 00`, then `F8 09 04 01 00 00 00` |
 | Rotation range (40–900°) | `F8 81 lo hi 00 00 00` |
-| Centering spring on | `FE 0D k k b 00 00`, then `14 00 00 00 00 00 00` |
+| Centering spring on | `FE 0D 0F 0F clip 00 00`, then `14 00 00 00 00 00 00` (clip 60–255 = 1–100%) |
 | Centering spring off | `F5 00 00 00 00 00 00` |
 | RPM LEDs (5 pairs, bitmask) | `F8 12 mask 00 00 00 01` |
 | Constant force test (slot 1) | `11 08 level 80 00 00 00`, stop with `13 00 …` |
+
+Centering spring, measured on a G27 by pushing the wheel ~150° off-centre
+with the motor and reading where it stops: the `hid-lg4ff` mapping uses a low
+slope (`k = 2` at 30%), which leaves the wheel ~25° short of centre because the
+gear friction beats the weak spring. The slope saturates at 15 (16–255 behave
+the same), and a clip below ~55 cannot bring the wheel back at all. With
+`k = 15` and the clip between 60 and 255 the wheel stops 2–5° from centre,
+which is the firmware spring's own dead band.
 
 The mode-switch bytes are the same ones `wmfilter.sys` itself keeps in a
 command table (at RVA `0x6A98`), which is how the Logitech driver
@@ -57,6 +65,13 @@ HKLM\SYSTEM\CurrentControlSet\Services\WmFilter\Parameters\VID_046D&PID_C29B
   CombinePedals    0 / 1
   OperatingRange   degrees (default 200, maximum 900)
 ```
+
+`WmHidLo.sys` reads `WheelRange` (default 200) from
+`HKLM\SYSTEM\CurrentControlSet\Services\WmHidLo\Parameters\VID_046D&PID_C29B`
+and sends it to the wheel when it starts, so without that value the G27 powers
+up at 200°. The installer writes 900. `WmHidLo` also reads a 19-byte
+`ButtonRemap` for the G27; its dead-zone values (`WheelFringe±`,
+`AccelFringe±`, `BrakeFringe±`) are only used for PID C295, not the G27.
 
 Changing them needs administrator rights and a device restart, which the app
 does through a UAC prompt.

@@ -173,6 +173,7 @@ function renderAlert() {
 }
 
 // ---------- settings ----------
+let lastAngle = null; // last wheel angle drawn; null forces a redraw
 let pending = {};
 let flushQueued = false;
 function update(patch) {
@@ -231,15 +232,22 @@ $('#resetSettings').addEventListener('click', () => {
   toast(t('Padrões restaurados'), 'ok');
 });
 
-// range gauge
+// range gauge: the semicircle spans ±450° (the G27 maximum); the blue arc
+// covers ±range/2 around the top and the needle shows the wheel inside it.
 const ARC = Math.PI * 100;
-$('#gaugeFill').style.strokeDasharray = `${ARC}`;
 function setRangeUI(r) {
   $('#rangeVal').textContent = r;
   $('#rangeSlider').value = r;
   paintSlider($('#rangeSlider'));
-  $('#gaugeFill').style.strokeDashoffset = `${ARC * (1 - (r - 40) / 860)}`;
+  const len = (ARC * r) / 900;
+  $('#gaugeFill').style.strokeDasharray = `0 ${(ARC - len) / 2} ${len} ${ARC}`;
   $$('#rangePresets button').forEach((b) => b.classList.toggle('on', +b.dataset.v === r));
+  lastAngle = null; // re-place the needle for the new range
+}
+function setNeedle(angle, range) {
+  const half = range / 2;
+  const a = Math.max(-half, Math.min(half, angle));
+  $('#gaugeNeedle').style.transform = `rotate(${(a / 450) * 90}deg)`;
 }
 $('#rangeSlider').addEventListener('input', (e) => { setRangeUI(+e.target.value); update({ range: +e.target.value }); });
 $$('#rangePresets button').forEach((b) => b.addEventListener('click', () => { setRangeUI(+b.dataset.v); update({ range: +b.dataset.v }); }));
@@ -337,7 +345,6 @@ function renderAxes(n) {
   }).join('');
 }
 
-let lastAngle = 0;
 function tick() {
   const gp = findPad();
   const s = S && settings();
@@ -351,7 +358,7 @@ function tick() {
       $('#liveAngle').textContent = `${angle > 0 ? '+' : ''}${angle}°`;
       $('#lw .w-rot').style.transform = `rotate(${angle}deg)`;
       $('#hw .w-rot').style.transform = `rotate(${angle}deg)`;
-      $('#gaugeNeedle').style.transform = `rotate(${(angle / 450) * 90}deg)`;
+      setNeedle(angle, s.range);
     }
     const bar = $('#inWheelBar');
     bar.style.left = `${50 + Math.min(0, v) * 50}%`;

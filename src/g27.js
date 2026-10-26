@@ -106,23 +106,18 @@ class G27 extends EventEmitter {
   }
 
   // percent 0..100; 0 disables the firmware centering spring.
+  // Measured on a G27: with a low slope (the hid-lg4ff mapping gives k=2 at
+  // 30%) the wheel stops ~25° short of centre because gear friction beats the
+  // weak spring. Slope saturates at 15, and a clip below ~55 cannot bring the
+  // wheel back at all, so keep k at maximum and let strength drive the clip.
   async setAutocenter(percent) {
-    const magnitude = Math.round((Math.max(0, Math.min(100, percent)) / 100) * 0xffff);
-    if (magnitude === 0) {
+    const p = Math.max(0, Math.min(100, Math.round(percent)));
+    if (p === 0) {
       await this.send([0xf5, 0, 0, 0, 0, 0, 0]);
       return;
     }
-    let a, b;
-    if (magnitude <= 0xaaaa) {
-      a = 0x0c * magnitude;
-      b = 0x80 * magnitude;
-    } else {
-      a = 0x0c * 0xaaaa + 0x06 * (magnitude - 0xaaaa);
-      b = 0x80 * 0xaaaa + 0xff * (magnitude - 0xaaaa);
-    }
-    a >>= 1; // non-MOMO wheels use half the spring coefficient
-    const k = Math.floor(a / 0xaaaa);
-    await this.send([0xfe, 0x0d, k, k, Math.min(0xff, Math.floor(b / 0xaaaa)), 0, 0]);
+    const clip = Math.round(60 + ((p - 1) / 99) * (0xff - 60));
+    await this.send([0xfe, 0x0d, 0x0f, 0x0f, clip, 0, 0]);
     await this.send([0x14, 0, 0, 0, 0, 0, 0]);
   }
 
