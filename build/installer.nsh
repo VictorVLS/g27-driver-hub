@@ -8,7 +8,8 @@
   ${Else}
     DetailPrint "Installing the G27 driver (downloading the official LGS 5.10 from Logitech)..."
   ${EndIf}
-  nsExec::ExecToLog 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\resources\driver\install-driver.ps1" -SevenZip "$INSTDIR\resources\vendor\7zip\7z.exe" -Lang $1 -LogPath "$TEMP\g27-driver-hub-install.log"'
+  ; Sysnative: the 64-bit PowerShell, since this installer runs as a 32-bit process.
+  nsExec::ExecToLog '"$WINDIR\Sysnative\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\resources\driver\install-driver.ps1" -SevenZip "$INSTDIR\resources\vendor\7zip\7z.exe" -Lang $1 -LogPath "$TEMP\g27-driver-hub-install.log"'
   Pop $0
   ${If} $0 != 0
     ${If} $LANGUAGE == 1046

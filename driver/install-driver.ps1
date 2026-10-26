@@ -16,6 +16,21 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# The NSIS installer is a 32-bit process, so it may start the 32-bit PowerShell,
+# where System32 is redirected to SysWOW64 (no pnputil, wrong drivers folder).
+# Re-run this script in the native 64-bit PowerShell.
+if ([Environment]::Is64BitOperatingSystem -and -not [Environment]::Is64BitProcess) {
+    $ps64 = Join-Path $env:SystemRoot 'Sysnative\WindowsPowerShell\v1.0\powershell.exe'
+    $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath)
+    foreach ($k in $PSBoundParameters.Keys) {
+        $v = $PSBoundParameters[$k]
+        if ($v -is [switch]) { if ($v) { $argList += "-$k" } } else { $argList += "-$k", "$v" }
+    }
+    & $ps64 @argList
+    exit $LASTEXITCODE
+}
+
 $LgsUrl = 'https://download01.logi.com/web/ftp/pub/techsupport/joystick/lgs510_x64.exe'
 $LgsSha256 = 'e07a278eab65df9fa50b3c454627c7169beb41824015839d2a0368caf284ca76'
 $DriverDir = Join-Path $CacheDir 'drivers'
