@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
+  <title>G27 Driver Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="titlebar">
+    <div class="brand"><span class="brand-mark">G27</span><span class="brand-name">HUB</span></div>
+
+    <div class="profile-switch" id="profileSwitch">
+      <button class="profile-pill" id="profileBtn" title="Trocar perfil">
+        <span class="pill-dot" id="profileDot"></span>
+        <span class="pill-label">PERFIL</span>
+        <span class="pill-name" id="profileName">Desktop</span>
+        <span class="pill-auto" id="profileAuto" hidden>AUTO</span>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="menu" id="profileMenu" hidden></div>
+    </div>
+
+    <div class="title-spacer"></div>
+    <div class="device-chip" id="deviceChip"><span class="dot"></span><span class="txt">Procurando volante…</span></div>
+    <div class="win-btns">
+      <button data-win="min" title="Minimizar"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+      <button data-win="max" title="Maximizar"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg></button>
+      <button data-win="close" class="close" title="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="rail" id="rail">
+      <button data-view="home" class="active"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Início</span></button>
+      <button data-view="wheel"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M3.5 10.5l6.2 1M20.5 10.5l-6.2 1M12 14.5V21"/></svg><span>Volante</span></button>
+      <button data-view="inputs"><svg viewBox="0 0 24 24"><path d="M5 20V9M10 20V4M15 20v-7M20 20V7"/></svg><span>Entradas</span></button>
+      <button data-view="leds"><svg viewBox="0 0 24 24"><circle cx="4" cy="12" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>LEDs</span></button>
+      <button data-view="profiles"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg><span>Perfis</span></button>
+      <div class="rail-spacer"></div>
+      <button data-view="system"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Sistema</span><i class="badge" id="sysBadge" hidden>!</i></button>
+    </nav>
+
+    <main id="main">
+      <!-- INÍCIO -->
+      <section class="view active" data-view="home">
+        <div class="alert" id="homeAlert" hidden>
+          <div class="alert-ico">!</div>
+          <div class="alert-body"><b id="homeAlertTitle"></b><span id="homeAlertText"></span></div>
+          <button class="btn primary" id="homeAlertBtn"></button>
+        </div>
+        <div class="hero">
+          <div class="hero-glow"></div>
+          <div class="hero-wheel" id="heroWheel"></div>
+          <h1 id="heroModel">G27 Racing Wheel</h1>
+          <p class="hero-sub" id="heroSub">Conecte o volante na USB</p>
+          <div class="tiles">
+            <button class="tile" data-goto="wheel"><span class="tile-k">Rotação</span><span class="tile-v" id="tRange">900°</span></button>
+            <button class="tile" data-goto="wheel"><span class="tile-k">Centralização</span><span class="tile-v" id="tCenter">30%</span></button>
+            <button class="tile" data-goto="wheel"><span class="tile-k">Força geral</span><span class="tile-v" id="tOverall">100%</span></button>
+            <button class="tile" data-goto="profiles"><span class="tile-k">Perfil</span><span class="tile-v" id="tProfile">Desktop</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VOLANTE -->
+      <section class="view" data-view="wheel">
+        <div class="view-head"><h2>Volante</h2><p>As alterações são aplicadas na hora e salvas no perfil <b class="js-profile-name">Desktop</b>.</p></div>
+        <div class="grid two">
+          <div class="card span-rows">
+            <div class="card-head"><h3>Ângulo de rotação</h3><span class="hint">Graus de rotação</span></div>
+            <div class="gauge-wrap">
+              <svg class="gauge" viewBox="0 0 240 150" id="rangeGauge">
+                <path class="g-track" d="M20 130 A100 100 0 0 1 220 130"/>
+                <path class="g-fill" id="gaugeFill" d="M20 130 A100 100 0 0 1 220 130"/>
+                <line class="g-needle" id="gaugeNeedle" x1="120" y1="58" x2="120" y2="20"/>
+              </svg>
+              <div class="gauge-val"><span id="rangeVal">900</span><small>°</small></div>
+              <div class="gauge-live">Posição atual: <b id="liveAngle">—</b></div>
+            </div>
+            <input type="range" min="40" max="900" step="10" id="rangeSlider" class="slider big" />
+            <div class="chips" id="rangePresets">
+              <button data-v="180">180°</button><button data-v="270">270°</button><button data-v="360">360°</button>
+              <button data-v="540">540°</button><button data-v="720">720°</button><button data-v="900">900°</button>
+            </div>
+            <p class="note">Dica: 900° para simuladores (o jogo ajusta o volante virtual); 270–540° para arcade e drift.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Force Feedback</h3><span class="hint">Vale na próxima vez que o jogo abrir</span></div>
+            <div class="field" data-key="overall"><label>Força geral dos efeitos</label><input type="range" min="0" max="150" class="slider" /><output></output></div>
+            <div class="field" data-key="spring"><label>Efeitos de mola</label><input type="range" min="0" max="150" class="slider" /><output></output></div>
+            <div class="field" data-key="damper"><label>Efeitos de amortecimento</label><input type="range" min="0" max="150" class="slider" /><output></output></div>
+            <div class="test-row">
+              <span>Testar motores</span>
+              <button class="btn ghost" data-force="-0.6">◀ Esquerda</button>
+              <button class="btn ghost" data-force="0.6">Direita ▶</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Mola de centralização</h3></div>
+            <div class="field" data-key="autocenter"><label>Fora dos jogos (firmware)</label><input type="range" min="0" max="100" class="slider" /><output></output></div>
+            <div class="toggle-row"><div><b>Ativar mola nos jogos com FFB</b><small>Para jogos que não criam força de centralização própria</small></div><label class="switch"><input type="checkbox" data-key="centeringSpring" /><span></span></label></div>
+            <div class="field" data-key="centeringStrength" id="centerStrengthField"><label>Intensidade nos jogos</label><input type="range" min="0" max="150" class="slider" /><output></output></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Jogos e pedais</h3></div>
+            <div class="toggle-row"><div><b>Permitir que o jogo ajuste as configurações</b><small>Recomendado — o jogo define rotação e FFB enquanto está aberto</small></div><label class="switch"><input type="checkbox" data-key="allowGame" /><span></span></label></div>
+            <div class="toggle-row"><div><b>Pedais combinados</b><small>Acelerador e freio no mesmo eixo (jogos antigos). Pede permissão de administrador.</small></div><label class="switch"><input type="checkbox" data-key="combinedPedals" /><span></span></label></div>
+            <button class="btn ghost small" id="resetSettings">Restaurar padrões deste perfil</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENTRADAS -->
+      <section class="view" data-view="inputs">
+        <div class="view-head"><h2>Teste de entradas</h2><p id="padInfo">Gire o volante, pise nos pedais e aperte os botões.</p></div>
+        <div class="grid inputs">
+          <div class="card center">
+            <div class="live-wheel" id="liveWheel"></div>
+            <div class="big-readout"><span id="inAngle">0</span><small>°</small></div>
+            <div class="axis-bar"><div id="inWheelBar"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Pedais</h3><button class="btn ghost small" id="calibPedals">Mapear pedais</button></div>
+            <div class="pedals">
+              <div class="pedal" data-pedal="clutch"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Embreagem</span></div>
+              <div class="pedal" data-pedal="brake"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Freio</span></div>
+              <div class="pedal" data-pedal="accel"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Acelerador</span></div>
+            </div>
+            <p class="note" id="calibMsg"></p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Câmbio</h3><span class="hint">H-pattern + ré</span></div>
+            <svg class="shifter" viewBox="0 0 220 160" id="shifter">
+              <path class="gate" d="M30 30v100M90 30v100M150 30v100M200 30v100M30 80h170"/>
+              <g id="gears"></g>
+              <circle id="knob" cx="115" cy="80" r="13"/>
+            </svg>
+            <div class="gear-readout">Marcha: <b id="gearTxt">N</b></div>
+          </div>
+          <div class="card wide">
+            <div class="card-head"><h3>Botões</h3><span class="hint" id="btnCount"></span></div>
+            <div class="btn-grid" id="btnGrid"></div>
+            <div class="dpad" id="dpad"><i data-d="up"></i><i data-d="right"></i><i data-d="down"></i><i data-d="left"></i></div>
+          </div>
+          <div class="card wide">
+            <div class="card-head"><h3>Eixos brutos</h3><span class="hint">Se um pedal não mexer, use "Mapear pedais"</span></div>
+            <div class="axes" id="axesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEDs -->
+      <section class="view" data-view="leds">
+        <div class="view-head"><h2>Luzes de RPM</h2><p>Os 10 LEDs do G27 acendem em pares. Clique para ligar/desligar.</p></div>
+        <div class="card led-card">
+          <div class="led-bar" id="ledBar"></div>
+          <div class="field wide" id="rpmField"><label>Simular RPM</label><input type="range" min="0" max="100" value="0" class="slider" id="rpmSlider" /><output id="rpmOut">0%</output></div>
+          <div class="btn-row">
+            <button class="btn primary" id="ledSweep">Teste de RPM</button>
+            <button class="btn ghost" id="ledAll">Acender todos</button>
+            <button class="btn ghost" id="ledOff">Apagar</button>
+          </div>
+          <p class="note">Em jogo, os LEDs são controlados pelo próprio jogo (rFactor, Assetto Corsa, Dirt, etc.).</p>
+        </div>
+      </section>
+
+      <!-- PERFIS -->
+      <section class="view" data-view="profiles">
+        <div class="view-head row">
+          <div><h2>Jogos e perfis</h2><p>Cada jogo pode ter rotação e FFB próprios. O perfil troca sozinho quando o jogo abre.</p></div>
+          <label class="switch-line"><span>Troca automática</span><label class="switch"><input type="checkbox" data-pref="autoSwitch" /><span></span></label></label>
+        </div>
+        <div class="profile-grid" id="profileGrid"></div>
+      </section>
+
+      <!-- SISTEMA -->
+      <section class="view" data-view="system">
+        <div class="view-head"><h2>Sistema</h2><p>Driver, modo do volante e preferências do aplicativo.</p></div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head"><h3>Driver Logitech</h3><span class="status-pill" id="drvPill">verificando…</span></div>
+            <ul class="checklist" id="drvList"></ul>
+            <div class="btn-row">
+              <button class="btn primary" id="drvRepair">Instalar / reparar driver</button>
+              <button class="btn ghost" id="drvLocal">Usar lgs510_x64.exe local…</button>
+              <button class="btn ghost" id="drvRefresh">Verificar de novo</button>
+            </div>
+            <p class="note">O driver vem do instalador oficial do LGS 5.10, baixado do servidor da Logitech e conferido (SHA-256 e assinatura). Só os drivers do volante são instalados — o programa LGS não, então não há conflito com o G HUB.</p>
+            <pre class="log" id="drvLog" hidden></pre>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Modo do volante</h3><span class="status-pill" id="modePill">—</span></div>
+            <p class="note" id="modeText">O G27 liga em modo de compatibilidade (200°, pedais combinados). O modo nativo libera 900°, pedais separados, câmbio e LEDs.</p>
+            <div class="btn-row"><button class="btn primary" id="btnNative">Ativar modo nativo</button><button class="btn ghost" id="btnReapply">Reaplicar perfil</button></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Preferências</h3></div>
+            <div class="toggle-row"><div><b>Idioma</b><small>Language</small></div>
+              <select id="langSelect" class="select"><option value="pt">Português (Brasil)</option><option value="en">English</option></select>
+            </div>
+            <div class="toggle-row"><div><b>Iniciar com o Windows</b><small>Abre minimizado na bandeja</small></div><label class="switch"><input type="checkbox" data-pref="startWithWindows" /><span></span></label></div>
+            <div class="toggle-row"><div><b>Fechar para a bandeja</b><small>Mantém os perfis automáticos funcionando</small></div><label class="switch"><input type="checkbox" data-pref="minimizeToTray" /><span></span></label></div>
+            <div class="toggle-row"><div><b>Modo nativo automático</b><small>Ativa 900° assim que o volante é conectado</small></div><label class="switch"><input type="checkbox" data-pref="autoNative" /><span></span></label></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Sobre</h3></div>
+            <p class="note">G27 Driver Hub substitui a interface do Logitech Gaming Software 5.10 para o G27, usando os drivers originais da Logitech (WmJoyHid 5.09.129). Projeto independente, sem vínculo com a Logitech.</p>
+            <p class="note" id="aboutVer"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-box">
+      <h3 id="modalTitle">Adicionar jogo</h3>
+      <label class="in"><span>Nome</span><input id="mName" placeholder="Ex.: Assetto Corsa" /></label>
+      <label class="in"><span>Executável</span>
+        <div class="in-row"><input id="mExe" placeholder="acs.exe" /><button class="btn ghost small" id="mPick">Procurar…</button></div>
+      </label>
+      <div class="proc-list" id="mProcs"></div>
+      <div class="swatches" id="mColors"></div>
+      <div class="btn-row end"><button class="btn ghost" id="mCancel">Cancelar</button><button class="btn primary" id="mSave">Salvar</button></div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="../i18n-dict.js"></script>
+  <script src="wheel-art.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+vendor/
+out/
+*.log
+
+# Logitech binaries must never be committed (their license forbids redistribution)
+*.sys
+*.cat
+*.inf
+lgs510*.exe

@@ -1,0 +1,56 @@
+{
+  "name": "g27-driver-hub",
+  "productName": "G27 Driver Hub",
+  "version": "1.0.0",
+  "description": "Painel moderno estilo G HUB para o volante Logitech G27, com instalação e reparo automático do driver",
+  "author": "Victor Vinicius",
+  "license": "MIT",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "vendor": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fetch-vendor.ps1",
+    "dist": "npm run vendor && electron-builder --win nsis --x64"
+  },
+  "dependencies": {
+    "node-hid": "^3.4.0"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "io.github.g27driverhub",
+    "productName": "G27 Driver Hub",
+    "copyright": "Copyright © 2026 Victor Vinicius",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "npmRebuild": false,
+    "electronLanguages": ["en-US", "pt-BR"],
+    "files": ["src/**/*", "assets/icon.png", "package.json"],
+    "extraResources": [
+      { "from": "driver", "to": "driver" },
+      { "from": "vendor", "to": "vendor" },
+      { "from": "assets", "to": "assets" }
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.ico",
+      "artifactName": "G27-Driver-Hub-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "G27 Driver Hub",
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "language": "1046",
+      "multiLanguageInstaller": true,
+      "installerLanguages": ["pt_BR", "en_US"],
+      "include": "build/installer.nsh",
+      "license": "LICENSE"
+    }
+  }
+}
