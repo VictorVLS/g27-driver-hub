@@ -144,6 +144,7 @@
     'Reiniciar e instalar': 'Restart and install',
     'Erro ao atualizar: {0}': 'Update error: {0}',
     'Tentar de novo': 'Try again',
+    'Sem conexão com o GitHub. Verifique a internet e tente de novo.': 'No connection to GitHub. Check your internet and try again.',
     'Atualizações só funcionam no app instalado.': 'Updates only work in the installed app.',
     'atualizado': 'up to date',
     'disponível': 'available',

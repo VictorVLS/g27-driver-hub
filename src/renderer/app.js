@@ -615,7 +615,7 @@ function renderUpdate(st) {
     available: `${base} — ${t('Versão {0} disponível.', st.version)}`,
     downloading: t('Baixando… {0}% ({1} de {2})', st.percent, mb(st.transferred || 0), mb(st.total || 0)),
     ready: t('Pronto para instalar a versão {0}. O app fecha, instala (o Windows pede permissão) e abre de novo.', st.version),
-    error: t('Erro ao atualizar: {0}', st.error),
+    error: st.error === 'offline' ? t('Sem conexão com o GitHub. Verifique a internet e tente de novo.') : t('Erro ao atualizar: {0}', st.error),
   };
   $('#updText').textContent = lines[st.status] || base;
   $('#updBar').hidden = st.status !== 'downloading';

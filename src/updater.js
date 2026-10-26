@@ -34,7 +34,21 @@ function init(onChange) {
     status: 'downloading', percent: Math.round(p.percent), transferred: p.transferred, total: p.total,
   }));
   autoUpdater.on('update-downloaded', () => set({ status: 'ready', percent: 100 }));
-  autoUpdater.on('error', (e) => set({ status: 'error', error: String((e && e.message) || e).split('\n')[0] }));
+  autoUpdater.on('error', (e) => {
+    const msg = String((e && e.message) || e);
+    // The newest GitHub release has no update metadata (an older release, or
+    // GitHub's releases feed still cached right after a publish): nothing to
+    // update to, so report "up to date" instead of an error.
+    if (state.status === 'checking' && /latest\.yml|No published versions|HttpError: 404/i.test(msg)) {
+      set({ status: 'latest' });
+      return;
+    }
+    if (/ENOTFOUND|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|ERR_INTERNET_DISCONNECTED|ERR_NAME_NOT_RESOLVED|ERR_NETWORK/i.test(msg)) {
+      set({ status: 'error', error: 'offline' });
+      return;
+    }
+    set({ status: 'error', error: msg.split('\n')[0] });
+  });
 }
 
 async function check() {
