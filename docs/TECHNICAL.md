@@ -76,6 +76,27 @@ up at 200°. The installer writes 900. `WmHidLo` also reads a 19-byte
 Changing them needs administrator rights and a device restart, which the app
 does through a UAC prompt.
 
+## 4. Pedal dead zones (DirectInput calibration)
+
+Neither the G27 firmware nor the Logitech filters offer a dead zone for the
+G27, so the app uses DirectInput's own per-axis calibration:
+
+```
+HKCU\System\CurrentControlSet\Control\MediaProperties\PrivateProperties\
+  DirectInput\VID_046D&PID_C29B\Calibration\<n>\Type\Axes\<axis>
+  Calibration  REG_BINARY  LONG lMin, LONG lCenter, LONG lMax   (raw units)
+```
+
+`<n>` is each instance DirectInput created for the wheel. The axis slots were
+found by writing a different test calibration to every slot and reading the
+wheel through DirectInput 8: 2 = throttle (DirectInput Y), 5 = brake (Rz),
+6 = clutch (second slider), 0 = wheel, 1 = combined pedals. The pedals report
+255 released and 0 fully pressed, so a start dead zone of S% sets
+`lMax = 255 × (1 − S)` and an end dead zone of E% sets `lMin = 255 × E`.
+Reading `DIPROP_CALIBRATION` back through DirectInput returns exactly these
+values. Games that read the wheel through Raw Input, Windows.Gaming.Input or
+SDL ignore this calibration.
+
 ## Driver installation
 
 `driver/install-driver.ps1`:

@@ -283,10 +283,20 @@ main { flex: 1; overflow-y: auto; position: relative; }
 .pedals { display: flex; justify-content: space-around; gap: 16px; height: 220px; }
 .pedal { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .pbar { position: relative; width: 38px; flex: 1; background: var(--line2); border-radius: 8px; overflow: hidden; }
-.pbar div { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; border-radius: 8px; transition: height .03s linear; }
-.pedal[data-pedal="accel"] .pbar div { background: linear-gradient(0deg, #1fae63, var(--ok)); }
-.pedal[data-pedal="brake"] .pbar div { background: linear-gradient(0deg, #c9283b, var(--bad)); }
-.pedal[data-pedal="clutch"] .pbar div { background: linear-gradient(0deg, #0084b8, var(--accent)); }
+.pbar .fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; border-radius: 8px; transition: height .03s linear; }
+.pedal[data-pedal="accel"] .pbar .fill { background: linear-gradient(0deg, #1fae63, var(--ok)); }
+.pedal[data-pedal="brake"] .pbar .fill { background: linear-gradient(0deg, #c9283b, var(--bad)); }
+.pedal[data-pedal="clutch"] .pbar .fill { background: linear-gradient(0deg, #0084b8, var(--accent)); }
+/* dead zones: hatched bands at the start (bottom of the bar) and end (top) of the travel */
+.pbar .dz { position: absolute; left: 0; right: 0; height: 0; pointer-events: none;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.18) 0 4px, rgba(255,255,255,.04) 4px 8px); }
+.pbar .dz.start { bottom: 0; border-top: 1px dashed rgba(255,255,255,.5); }
+.pbar .dz.end { top: 0; border-bottom: 1px dashed rgba(255,255,255,.5); }
+.pg { font-size: 11px; color: var(--accent); min-height: 14px; font-variant-numeric: tabular-nums; }
+.dz-grid { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 6px 16px; align-items: center; }
+.dz-grid b { font-size: 13px; font-weight: 600; }
+.dz-h { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); font-weight: 700; }
+.field.compact { margin: 0; }
 .pedal.learn .pbar { outline: 2px solid var(--warn); outline-offset: 3px; animation: pulse 1s infinite; }
 @keyframes pulse { 50% { outline-color: transparent; } }
 .pv { font-weight: 700; font-variant-numeric: tabular-nums; }

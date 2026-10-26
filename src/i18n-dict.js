@@ -67,6 +67,12 @@
     'Pedais separados ativados': 'Separate pedals enabled',
     'Não foi possível alterar os pedais': 'Could not change the pedal mode',
 
+    'Zona morta dos pedais': 'Pedal dead zones',
+    'Início do curso': 'Start of travel',
+    'Fim do curso': 'End of travel',
+    'Início: ignora o começo da pisada (pedal "folgado"). Fim: chega a 100% antes do fundo. Funciona em jogos que usam DirectInput (Forza Horizon 4, Assetto Corsa, rFactor, Dirt e a maioria dos simuladores). Veja o efeito em Entradas.': 'Start: ignores the first part of the press (a "loose" pedal). End: reaches 100% before the floor. Works in games that use DirectInput (Forza Horizon 4, Assetto Corsa, rFactor, Dirt and most sims). See the effect under Inputs.',
+    'jogo {0}%': 'game {0}%',
+
     // inputs
     'Teste de entradas': 'Input test',
     'Gire o volante, pise nos pedais e aperte os botões.': 'Turn the wheel, press the pedals and push the buttons.',

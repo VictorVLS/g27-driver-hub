@@ -12,6 +12,14 @@
 // REG_DWORD CombinePedals (0/1) and OperatingRange (degrees, default 200, max 900).
 // WmHidLo.sys reads WheelRange (default 200) from its own Parameters key and
 // sends it to the wheel as the start-up rotation.
+//
+// Pedal dead zones use DirectInput's own per-axis calibration (verified by
+// reading the wheel through DirectInput 8 before and after writing it):
+//   HKCU\System\CurrentControlSet\Control\MediaProperties\PrivateProperties\
+//     DirectInput\VID_046D&PID_C29B\Calibration\<n>\Type\Axes\<axis>
+//   REG_BINARY Calibration = LONG lMin, lCenter, lMax (raw units)
+// Axis slots: 2 = throttle, 5 = brake, 6 = clutch; the pedals report 255
+// released and 0 fully pressed. DirectInput reads it when a game opens the wheel.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -21,6 +29,9 @@ const DEVICE = 'VID_046D&PID_C29B';
 const USER_KEY = `HKEY_CURRENT_USER\\Software\\Logitech\\Gaming Software\\DriverSettings\\${DEVICE}`;
 const FILTER_KEY = `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WmFilter\\Parameters\\${DEVICE}`;
 const HIDLO_KEY = `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WmHidLo\\Parameters\\${DEVICE}`;
+const DI_CAL_KEY = `HKEY_CURRENT_USER\\System\\CurrentControlSet\\Control\\MediaProperties\\PrivateProperties\\DirectInput\\${DEVICE}\\Calibration`;
+const PEDAL_AXES = { accel: 2, brake: 5, clutch: 6 };
+const PEDAL_RAW_MAX = 255;
 
 const pct = (v) => Math.max(0, Math.min(15000, Math.round(v * 100)));
 const dword = (n) => `dword:${(n >>> 0).toString(16).padStart(8, '0')}`;
@@ -42,8 +53,48 @@ function importReg(text) {
   });
 }
 
+// Calibration\<n> subkeys DirectInput created for the wheel (one per instance).
+function calibrationSlots() {
+  return new Promise((resolve) => {
+    execFile('reg.exe', ['query', DI_CAL_KEY], { windowsHide: true }, (err, stdout) => {
+      if (err) return resolve([]);
+      resolve(String(stdout).split(/\r?\n/).filter((l) => /\\Calibration\\\d+$/i.test(l.trim())).map((l) => l.trim()));
+    });
+  });
+}
+
+// start: % of travel ignored at the top (released end); end: % before the
+// floor that already counts as fully pressed. Returns null for "no dead zone".
+function pedalCalibration(start, end) {
+  if (!start && !end) return null;
+  let max = Math.round(PEDAL_RAW_MAX * (1 - start / 100));
+  let min = Math.round(PEDAL_RAW_MAX * (end / 100));
+  if (max - min < 32) max = min + 32;
+  const center = Math.round((min + max) / 2);
+  return [min, center, max];
+}
+
+function calibrationReg(slots, s) {
+  const lines = [];
+  for (const slot of slots) {
+    for (const [pedal, axis] of Object.entries(PEDAL_AXES)) {
+      const cal = pedalCalibration(s[`dz_${pedal}_start`] || 0, s[`dz_${pedal}_end`] || 0);
+      lines.push('', `[${slot}\\Type\\Axes\\${axis}]`);
+      if (!cal) {
+        lines.push('"Calibration"=-');
+        continue;
+      }
+      const bytes = Buffer.alloc(12);
+      cal.forEach((v, i) => bytes.writeInt32LE(v, i * 4));
+      lines.push(`"Calibration"=hex:${[...bytes].map((b) => b.toString(16).padStart(2, '0')).join(',')}`);
+    }
+  }
+  return lines.join('\r\n') + '\r\n';
+}
+
 let lastUser = '';
 async function applyUser(s) {
+  const slots = await calibrationSlots();
   const text = regFile(USER_KEY, {
     OverallStrength: pct(s.overall),
     SpringStrength: pct(s.spring),
@@ -51,7 +102,7 @@ async function applyUser(s) {
     CenteringSpring: pct(s.centeringStrength),
     PersistentCenteringSpring: s.centeringSpring ? 1 : 0,
     ForceEnabled: 1,
-  });
+  }) + calibrationReg(slots, s);
   if (text === lastUser) return;
   await importReg(text);
   lastUser = text;
@@ -83,4 +134,4 @@ function setFilterParams({ combinedPedals, range }) {
   });
 }
 
-module.exports = { applyUser, setFilterParams, USER_KEY, FILTER_KEY };
+module.exports = { applyUser, setFilterParams, pedalCalibration, USER_KEY, FILTER_KEY };

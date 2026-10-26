@@ -227,7 +227,10 @@ $$('input[type=checkbox][data-key]').forEach((c) => c.addEventListener('change',
 }));
 
 $('#resetSettings').addEventListener('click', () => {
-  update({ range: 900, autocenter: 30, overall: 100, spring: 100, damper: 100, centeringSpring: false, centeringStrength: 100, allowGame: true });
+  update({
+    range: 900, autocenter: 30, overall: 100, spring: 100, damper: 100, centeringSpring: false, centeringStrength: 100, allowGame: true,
+    dz_accel_start: 0, dz_accel_end: 0, dz_brake_start: 0, dz_brake_end: 0, dz_clutch_start: 0, dz_clutch_end: 0,
+  });
   renderSettings();
   toast(t('Padrões restaurados'), 'ok');
 });
@@ -367,8 +370,15 @@ function tick() {
     for (const key of ['accel', 'brake', 'clutch']) {
       const el = $(`.pedal[data-pedal="${key}"]`);
       const pct = pedalPct(gp, key);
-      $('.pbar div', el).style.height = `${(pct || 0) * 100}%`;
+      const start = (s[`dz_${key}_start`] || 0) / 100;
+      const end = (s[`dz_${key}_end`] || 0) / 100;
+      $('.pbar .fill', el).style.height = `${(pct || 0) * 100}%`;
+      $('.dz.start', el).style.height = `${start * 100}%`;
+      $('.dz.end', el).style.height = `${end * 100}%`;
       $('.pv', el).textContent = pct == null ? '—' : `${Math.round(pct * 100)}%`;
+      // What a DirectInput game reads once the calibration dead zones apply.
+      const game = pct == null ? null : Math.max(0, Math.min(1, (pct - start) / Math.max(0.01, 1 - start - end)));
+      $('.pg', el).textContent = (start || end) && game != null ? t('jogo {0}%', Math.round(game * 100)) : '';
     }
 
     if (gp.buttons.length !== btnCount) renderButtons(gp.buttons.length);

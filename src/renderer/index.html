@@ -111,6 +111,23 @@
             <div class="toggle-row"><div><b>Pedais combinados</b><small>Acelerador e freio no mesmo eixo (jogos antigos). Pede permissão de administrador.</small></div><label class="switch"><input type="checkbox" data-key="combinedPedals" /><span></span></label></div>
             <button class="btn ghost small" id="resetSettings">Restaurar padrões deste perfil</button>
           </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Zona morta dos pedais</h3><span class="hint">Vale na próxima vez que o jogo abrir</span></div>
+            <div class="dz-grid">
+              <span></span><span class="dz-h">Início do curso</span><span class="dz-h">Fim do curso</span>
+              <b>Acelerador</b>
+              <div class="field compact" data-key="dz_accel_start"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+              <div class="field compact" data-key="dz_accel_end"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+              <b>Freio</b>
+              <div class="field compact" data-key="dz_brake_start"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+              <div class="field compact" data-key="dz_brake_end"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+              <b>Embreagem</b>
+              <div class="field compact" data-key="dz_clutch_start"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+              <div class="field compact" data-key="dz_clutch_end"><input type="range" min="0" max="40" class="slider" /><output></output></div>
+            </div>
+            <p class="note">Início: ignora o começo da pisada (pedal "folgado"). Fim: chega a 100% antes do fundo. Funciona em jogos que usam DirectInput (Forza Horizon 4, Assetto Corsa, rFactor, Dirt e a maioria dos simuladores). Veja o efeito em Entradas.</p>
+          </div>
         </div>
       </section>
 
@@ -126,9 +143,9 @@
           <div class="card">
             <div class="card-head"><h3>Pedais</h3><button class="btn ghost small" id="calibPedals">Mapear pedais</button></div>
             <div class="pedals">
-              <div class="pedal" data-pedal="clutch"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Embreagem</span></div>
-              <div class="pedal" data-pedal="brake"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Freio</span></div>
-              <div class="pedal" data-pedal="accel"><div class="pbar"><div></div></div><span class="pv">0%</span><span class="pl">Acelerador</span></div>
+              <div class="pedal" data-pedal="clutch"><div class="pbar"><div class="fill"></div><i class="dz start"></i><i class="dz end"></i></div><span class="pv">0%</span><span class="pg"></span><span class="pl">Embreagem</span></div>
+              <div class="pedal" data-pedal="brake"><div class="pbar"><div class="fill"></div><i class="dz start"></i><i class="dz end"></i></div><span class="pv">0%</span><span class="pg"></span><span class="pl">Freio</span></div>
+              <div class="pedal" data-pedal="accel"><div class="pbar"><div class="fill"></div><i class="dz start"></i><i class="dz end"></i></div><span class="pv">0%</span><span class="pg"></span><span class="pl">Acelerador</span></div>
             </div>
             <p class="note" id="calibMsg"></p>
           </div>

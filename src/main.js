@@ -22,6 +22,13 @@ const DEFAULT_SETTINGS = {
   centeringStrength: 100,
   combinedPedals: false,
   allowGame: true,
+  // pedal dead zones, % of travel (DirectInput calibration)
+  dz_accel_start: 0,
+  dz_accel_end: 0,
+  dz_brake_start: 0,
+  dz_brake_end: 0,
+  dz_clutch_start: 0,
+  dz_clutch_end: 0,
 };
 
 const DEFAULT_CONFIG = {
