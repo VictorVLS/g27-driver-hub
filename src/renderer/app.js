@@ -310,7 +310,8 @@ const DEFAULT_MAP = { wheel: 0, accel: 2, brake: 5, clutch: 6, rest: {} };
 let axisMap = (() => { try { return { ...DEFAULT_MAP, ...JSON.parse(localStorage.getItem(MAP_KEY)) }; } catch { return { ...DEFAULT_MAP }; } })();
 const saveMap = () => { try { localStorage.setItem(MAP_KEY, JSON.stringify(axisMap)); } catch { /* ignore */ } };
 const GEARS = { 8: '1', 9: '2', 10: '3', 11: '4', 12: '5', 13: '6', 14: 'R' };
-const GEAR_POS = { N: [115, 80], 1: [30, 30], 2: [30, 130], 3: [90, 30], 4: [90, 130], 5: [150, 30], 6: [150, 130], R: [200, 130] };
+// Neutral sits in the middle column (between 3rd and 4th), like the real G27 shifter.
+const GEAR_POS = { N: [90, 80], 1: [30, 30], 2: [30, 130], 3: [90, 30], 4: [90, 130], 5: [150, 30], 6: [150, 130], R: [200, 130] };
 $('#gears').innerHTML = Object.entries(GEAR_POS).filter(([k]) => k !== 'N')
   .map(([k, [x, y]]) => `<text data-g="${k}" x="${x}" y="${y < 80 ? y - 12 : y + 24}">${k}</text>`).join('');
 
@@ -414,12 +415,19 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
-// pedal mapping: press each pedal fully, the axis that moves most is assigned
+// Pedal mapping. The rest position of every axis is captured once, with all
+// pedals released. For each pedal we wait for one axis (not the wheel, the hat
+// or an axis already taken) to move far from rest, then for that axis to come
+// back to rest, and only then move on, so releasing a pedal is never read as
+// the next pedal being pressed.
 const LEARN_ORDER = [['accel', 'ACELERADOR'], ['brake', 'FREIO'], ['clutch', 'EMBREAGEM']];
+const PRESS_DELTA = 1.2; // a full press moves a pedal axis by ~2.0
+const RELEASE_DELTA = 0.25;
+const CLUTCH_TIMEOUT_MS = 8000;
 function startLearning() {
   const gp = findPad();
   if (!gp) return toast(t('Volante não encontrado na leitura de entradas'), 'error');
-  learning = { step: 0, base: [...gp.axes], t0: performance.now() };
+  learning = { step: 0, rest: [...gp.axes], taken: new Set(), pressed: null, map: {}, t0: performance.now() };
   showLearnStep();
 }
 function showLearnStep() {
@@ -430,35 +438,44 @@ function showLearnStep() {
 }
 function stepLearning(gp) {
   const L = learning;
-  let best = -1, delta = 0;
-  gp.axes.forEach((a, i) => {
-    if (i === axisMap.wheel || i === 9) return;
-    const d = Math.abs(a - L.base[i]);
-    if (d > delta) { delta = d; best = i; }
-  });
-  const [key] = LEARN_ORDER[L.step];
-  if (delta > 1.2) {
-    axisMap[key] = best;
-    axisMap.rest[best] = L.base[best] >= 0 ? 1 : -1;
-    next();
-  } else if (key === 'clutch' && performance.now() - L.t0 > 8000) {
-    axisMap.clutch = null;
+  const [key, label] = LEARN_ORDER[L.step];
+  if (L.pressed == null) {
+    let best = -1, delta = 0;
+    gp.axes.forEach((a, i) => {
+      if (i === axisMap.wheel || i === 9 || L.taken.has(i)) return;
+      const d = Math.abs(a - L.rest[i]);
+      if (d > delta) { delta = d; best = i; }
+    });
+    if (delta > PRESS_DELTA) {
+      L.pressed = best;
+      $('#calibMsg').textContent = t('{0} detectado — agora solte o pedal.', t(label));
+    } else if (key === 'clutch' && performance.now() - L.t0 > CLUTCH_TIMEOUT_MS) {
+      L.map.clutch = null;
+      next();
+    }
+    return;
+  }
+  // wait until the pressed pedal is back at rest before the next one
+  if (Math.abs(gp.axes[L.pressed] - L.rest[L.pressed]) < RELEASE_DELTA) {
+    L.map[key] = L.pressed;
+    L.taken.add(L.pressed);
     next();
   }
   function next() {
     L.step += 1;
-    L.base = [...gp.axes];
-    L.t0 = performance.now() + 600;
-    if (L.step >= LEARN_ORDER.length) {
-      learning = null;
-      saveMap();
-      $$('.pedal').forEach((p) => p.classList.remove('learn'));
-      $('#calibMsg').textContent = t('Pedais mapeados.');
-      toast(t('Pedais mapeados'), 'ok');
-    } else {
-      setTimeout(() => { const g = findPad(); if (g && learning) learning.base = [...g.axes]; }, 600);
-      showLearnStep();
+    L.pressed = null;
+    L.t0 = performance.now();
+    if (L.step < LEARN_ORDER.length) return showLearnStep();
+    for (const [k, axis] of Object.entries(L.map)) {
+      axisMap[k] = axis;
+      if (axis != null) axisMap.rest[axis] = L.rest[axis] >= 0 ? 1 : -1;
     }
+    learning = null;
+    saveMap();
+    axesCount = -1; // refresh the axis labels
+    $$('.pedal').forEach((p) => p.classList.remove('learn'));
+    $('#calibMsg').textContent = t('Pedais mapeados.');
+    toast(t('Pedais mapeados'), 'ok');
   }
 }
 $('#calibPedals').addEventListener('click', startLearning);

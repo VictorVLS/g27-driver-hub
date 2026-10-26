@@ -101,6 +101,7 @@
     'EMBREAGEM': 'CLUTCH',
     'Pise até o fundo no {0} e solte. {1}': 'Press the {0} all the way down and release it. {1}',
     '(Sem embreagem? espere 8 s.)': '(No clutch? wait 8 s.)',
+    '{0} detectado — agora solte o pedal.': '{0} detected — now release the pedal.',
     'Pedais mapeados.': 'Pedals mapped.',
     'Pedais mapeados': 'Pedals mapped',
     'Volante não encontrado na leitura de entradas': 'Wheel not found by the input reader',
