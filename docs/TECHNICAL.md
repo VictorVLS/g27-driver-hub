@@ -97,6 +97,34 @@ Reading `DIPROP_CALIBRATION` back through DirectInput returns exactly these
 values. Games that read the wheel through Raw Input, Windows.Gaming.Input or
 SDL ignore this calibration.
 
+## 5. RPM LEDs
+
+The Logitech Steering Wheel SDK (`LogitechSteeringWheel.dll`) lights the LEDs
+with `IDirectInputDevice8::Escape` (vtable offset `0xC0`), which reaches
+`WmJoyFrc.dll` directly; the Logitech Gaming Software process (`LCore`) is only
+contacted for `LGS_Msg_SetOperatingRange`. `WmJoyFrc.dll` turns the game's
+current RPM, first-LED RPM and red line into `F8 12 mask`: masks 1, 3, 7, F,
+1F, 1F across six equal steps, then all LEDs toggling every 150 ms at or above
+the red line. Games with native Logitech LED support therefore work with the
+driver alone.
+
+For other games the app listens for telemetry and reproduces that mapping:
+
+| Source | Port | Fields used |
+| --- | --- | --- |
+| Forza "Data Out" (Sled/Dash, any size ≥ 232) | 5300 | `IsRaceOn` @0, `EngineMaxRpm` @8, `CurrentEngineRpm` @16 |
+| OutGauge (BeamNG, LFS) | 4444 | `RPM` @16, `ShowLights & DL_SHIFT` @44; max RPM is the highest seen per car |
+| Codemasters `extradata=3` | 20777 | float[37] RPM, float[63] max RPM |
+
+## 6. In-app updates
+
+electron-updater reads `latest.yml` from the latest GitHub release. The NSIS
+installer stores a copy of itself in `%LOCALAPPDATA%\g27-driver-hub-updater`,
+so an update downloads the old and new `.blockmap` files and only the blocks
+that changed (about 0.9 MB of the 110 MB installer between two builds). The
+update installer runs with `--updated`, and `install-driver.ps1 -Update` then
+only repairs the driver if it is unhealthy, so the wheel is not restarted.
+
 ## Driver installation
 
 `driver/install-driver.ps1`:

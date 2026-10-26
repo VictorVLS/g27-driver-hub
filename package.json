@@ -1,7 +1,7 @@
 {
   "name": "g27-driver-hub",
   "productName": "G27 Driver Hub",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Painel moderno estilo G HUB para o volante Logitech G27, com instalação e reparo automático do driver",
   "author": "Victor Vinicius",
   "license": "MIT",
@@ -10,9 +10,10 @@
   "scripts": {
     "start": "electron .",
     "vendor": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fetch-vendor.ps1",
-    "dist": "npm run vendor && electron-builder --win nsis --x64"
+    "dist": "npm run vendor && electron-builder --win nsis --x64 --publish never"
   },
   "dependencies": {
+    "electron-updater": "^6.8.11",
     "node-hid": "^3.4.0"
   },
   "devDependencies": {
@@ -23,17 +24,39 @@
     "appId": "io.github.g27driverhub",
     "productName": "G27 Driver Hub",
     "copyright": "Copyright © 2026 Victor Vinicius",
-    "directories": { "output": "dist", "buildResources": "build" },
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
     "npmRebuild": false,
-    "electronLanguages": ["en-US", "pt-BR"],
-    "files": ["src/**/*", "assets/icon.png", "package.json"],
-    "extraResources": [
-      { "from": "driver", "to": "driver" },
-      { "from": "vendor", "to": "vendor" },
-      { "from": "assets", "to": "assets" }
+    "electronLanguages": [
+      "en-US",
+      "pt-BR"
     ],
+    "files": [
+      "src/**/*",
+      "assets/icon.png",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "driver",
+        "to": "driver"
+      },
+      {
+        "from": "vendor",
+        "to": "vendor"
+      },
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "publish": [{ "provider": "github", "owner": "VictorVLS", "repo": "g27-driver-hub" }],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "assets/icon.ico",
       "artifactName": "G27-Driver-Hub-Setup-${version}.${ext}"
     },
@@ -48,7 +71,10 @@
       "uninstallerIcon": "assets/icon.ico",
       "language": "1046",
       "multiLanguageInstaller": true,
-      "installerLanguages": ["pt_BR", "en_US"],
+      "installerLanguages": [
+        "pt_BR",
+        "en_US"
+      ],
       "include": "build/installer.nsh",
       "license": "LICENSE"
     }

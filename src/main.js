@@ -5,6 +5,8 @@ const { G27 } = require('./g27');
 const sys = require('./system');
 const driverSettings = require('./driver-settings');
 const EN = require('./i18n-dict');
+const { Telemetry } = require('./telemetry');
+const updater = require('./updater');
 
 const ROOT = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
 const DRIVER_SCRIPT = path.join(ROOT, 'driver', 'install-driver.ps1');
@@ -33,7 +35,11 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_CONFIG = {
   activeProfileId: 'desktop',
-  prefs: { autoSwitch: true, autoNative: true, minimizeToTray: true, startWithWindows: false },
+  prefs: {
+    autoSwitch: true, autoNative: true, minimizeToTray: true, startWithWindows: false,
+    autoUpdate: true, // check GitHub releases when the app starts
+    ledTelemetry: true, ledStart: 75, ledRed: 95, // RPM LEDs from game telemetry (% of max RPM)
+  },
   profiles: [{ id: 'desktop', name: 'Desktop', exe: null, color: '#00b8fc', settings: { ...DEFAULT_SETTINGS } }],
 };
 
@@ -43,6 +49,10 @@ let tray = null;
 let quitting = false;
 let autoProfileId = null; // profile selected by the process watcher, if any
 const wheel = new G27();
+const telemetry = new Telemetry();
+telemetry.on('leds', (mask) => {
+  if (wheel.connected && wheel.status().native) wheel.setLeds(mask).catch(() => {});
+});
 
 function loadConfig() {
   try {
@@ -238,6 +248,11 @@ function registerIpc(rebuildTray) {
       app.setLoginItemSettings({ openAtLogin: !!patch.startWithWindows, args: ['--hidden'] });
     }
     if ('lang' in patch) rebuildTray();
+    if ('ledTelemetry' in patch) {
+      if (patch.ledTelemetry) telemetry.start({ start: config.prefs.ledStart, red: config.prefs.ledRed });
+      else telemetry.stop();
+    }
+    if ('ledStart' in patch || 'ledRed' in patch) telemetry.configure({ start: config.prefs.ledStart, red: config.prefs.ledRed });
     saveConfig();
     pushState();
     return config.prefs;
@@ -285,6 +300,13 @@ function registerIpc(rebuildTray) {
     return { ...r, message: r.message && t(r.message) };
   });
 
+  ipcMain.handle('telemetry:status', () => telemetry.status());
+
+  ipcMain.handle('update:state', () => updater.getState());
+  ipcMain.handle('update:check', () => updater.check());
+  ipcMain.handle('update:download', () => updater.download());
+  ipcMain.handle('update:install', () => { quitting = true; updater.install(); });
+
   ipcMain.on('win', (_e, action) => {
     if (!win) return;
     if (action === 'min') win.minimize();
@@ -306,6 +328,12 @@ if (!app.requestSingleInstanceLock()) {
     const rebuildTray = createTray();
     registerIpc(rebuildTray);
     if (process.argv.includes('--hidden')) win.once('ready-to-show', () => win.hide());
+    updater.init((st) => {
+      send('update', st);
+      if (st.status === 'available') toast(t('Nova versão {0} disponível — veja em Sistema', st.version));
+    });
+    if (config.prefs.autoUpdate) setTimeout(() => updater.check(), 8000);
+    if (config.prefs.ledTelemetry) telemetry.start({ start: config.prefs.ledStart, red: config.prefs.ledRed });
     wheel.poll();
     setInterval(() => wheel.poll(), 1000);
     setInterval(() => watchProcesses().catch(() => {}), 3000);

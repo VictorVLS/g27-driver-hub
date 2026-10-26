@@ -12,7 +12,8 @@ param(
     [string]$LogPath = "$env:TEMP\g27-driver-hub-install.log",
     [string]$CacheDir = (Join-Path $env:ProgramData 'G27DriverHub'),
     [ValidateSet('pt', 'en')] [string]$Lang = 'pt',
-    [switch]$ExtractOnly  # download, verify and unpack only; no admin needed
+    [switch]$ExtractOnly,  # download, verify and unpack only; no admin needed
+    [switch]$Update        # app update: only repair when the driver is unhealthy
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,9 +49,37 @@ function Assert-LogitechSigned($path) {
     }
 }
 
+function Test-DriverHealthy {
+    $files = 'drivers\WmFilter.sys', 'drivers\WmHidLo.sys', 'WmJoyFrc.dll' |
+        ForEach-Object { Test-Path (Join-Path $env:SystemRoot "System32\$_") }
+    $broken = Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match '^(USB|HID)\\VID_046D&PID_C29' -and $_.Status -ne 'OK' }
+    -not ($files -contains $false) -and -not $broken
+}
+
+# Start-up values read by WmFilter/WmHidLo; never overwrites the user's choices.
+function Set-DriverDefaults {
+    $params = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmFilter\Parameters\VID_046D&PID_C29B'
+    New-Item -Path $params -Force | Out-Null
+    if ($null -eq (Get-ItemProperty $params -Name OperatingRange -ErrorAction SilentlyContinue)) {
+        New-ItemProperty -Path $params -Name OperatingRange -PropertyType DWord -Value 900 -Force | Out-Null
+        New-ItemProperty -Path $params -Name CombinePedals -PropertyType DWord -Value 0 -Force | Out-Null
+    }
+    $hidlo = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmHidLo\Parameters\VID_046D&PID_C29B'
+    New-Item -Path $hidlo -Force | Out-Null
+    if ($null -eq (Get-ItemProperty $hidlo -Name WheelRange -ErrorAction SilentlyContinue)) {
+        New-ItemProperty -Path $hidlo -Name WheelRange -PropertyType DWord -Value 900 -Force | Out-Null
+    }
+}
+
 Start-Transcript -Path $LogPath -Force | Out-Null
 $code = 1
 try {
+    $skipInstall = $Update -and (Test-DriverHealthy)
+    if ($skipInstall) {
+        Set-DriverDefaults
+        Write-Output (L 'Atualização: driver já está saudável, nada a reinstalar.' 'Update: driver already healthy, nothing to reinstall.')
+    }
+    if (-not $skipInstall) {
     $haveDrivers = (Test-Path $DriverDir) -and -not ($Required | Where-Object { -not (Test-Path (Join-Path $DriverDir $_)) })
     if (-not $haveDrivers) {
         New-Item -ItemType Directory -Force $CacheDir | Out-Null
@@ -101,19 +130,9 @@ try {
             }
         }
 
-        # WmFilter and WmHidLo read these when the wheel starts; WmHidLo sends
-        # WheelRange to the wheel, and without it the wheel boots at 200°.
-        $params = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmFilter\Parameters\VID_046D&PID_C29B'
-        New-Item -Path $params -Force | Out-Null
-        if ($null -eq (Get-ItemProperty $params -Name OperatingRange -ErrorAction SilentlyContinue)) {
-            New-ItemProperty -Path $params -Name OperatingRange -PropertyType DWord -Value 900 -Force | Out-Null
-            New-ItemProperty -Path $params -Name CombinePedals -PropertyType DWord -Value 0 -Force | Out-Null
-        }
-        $hidlo = 'HKLM:\SYSTEM\CurrentControlSet\Services\WmHidLo\Parameters\VID_046D&PID_C29B'
-        New-Item -Path $hidlo -Force | Out-Null
-        if ($null -eq (Get-ItemProperty $hidlo -Name WheelRange -ErrorAction SilentlyContinue)) {
-            New-ItemProperty -Path $hidlo -Name WheelRange -PropertyType DWord -Value 900 -Force | Out-Null
-        }
+        # WmHidLo sends WheelRange to the wheel at start-up; without it the
+        # wheel boots at 200°.
+        Set-DriverDefaults
 
         # Installing the package can restart the wheel, which then re-enumerates
         # twice (compatibility PID C294, then native C29B). Never remove it in
@@ -145,6 +164,7 @@ try {
         } else {
             Write-Output (L 'Volante não encontrado: desconecte e conecte o cabo USB do G27.' 'Wheel not found: unplug and replug the G27 USB cable.')
         }
+    }
     }
     Write-Output (L 'Concluído.' 'Done.')
     $code = 0

@@ -110,6 +110,7 @@ function applyState(st) {
   renderProfiles();
   renderPrefs();
   if (drv) refreshDriverView();
+  if (upd.status) renderUpdate(upd); // re-translate
   $('#aboutVer').textContent = t('Versão {0} · Electron {1}', S.versions.app, S.versions.electron);
 }
 hub.onState(applyState);
@@ -163,7 +164,7 @@ function renderAlert() {
     };
   }
   a.hidden = !cfg;
-  $('#sysBadge').hidden = !(drv && drv.present && !drv.healthy);
+  $('#sysBadge').hidden = !((drv && drv.present && !drv.healthy) || ['available', 'ready'].includes(upd.status));
   if (!cfg) return;
   a.className = 'alert ' + cfg.cls;
   $('#homeAlertTitle').textContent = cfg.title;
@@ -554,10 +555,84 @@ $('#mSave').addEventListener('click', async () => {
 // ---------- prefs ----------
 function renderPrefs() {
   $$('input[data-pref]').forEach((c) => { c.checked = !!S.config.prefs[c.dataset.pref]; });
+  $$('.field[data-pref-key]').forEach((f) => {
+    const input = $('input', f);
+    input.value = S.config.prefs[f.dataset.prefKey];
+    $('output', f).textContent = `${input.value}%`;
+    paintSlider(input);
+  });
   $('#langSelect').value = lang;
 }
 $$('input[data-pref]').forEach((c) => c.addEventListener('change', () => hub.setPrefs({ [c.dataset.pref]: c.checked })));
 $('#langSelect').addEventListener('change', (e) => hub.setPrefs({ lang: e.target.value }));
+$$('.field[data-pref-key]').forEach((f) => {
+  const input = $('input', f);
+  let timer = null;
+  input.addEventListener('input', () => {
+    $('output', f).textContent = `${input.value}%`;
+    paintSlider(input);
+    clearTimeout(timer);
+    timer = setTimeout(() => hub.setPrefs({ [f.dataset.prefKey]: +input.value }), 120);
+  });
+});
+
+// ---------- telemetry LEDs ----------
+async function refreshTelemetry() {
+  if (!$('.view[data-view="leds"]').classList.contains('active') || !S) return;
+  const st = await hub.telemetryStatus();
+  const on = S.config.prefs.ledTelemetry;
+  $('#teleStatus').classList.toggle('live', on && st.live);
+  $('#teleText').textContent = !on ? t('Telemetria desligada')
+    : st.live ? t('Recebendo de {0} — {1} / {2} RPM', st.source, st.rpm.toLocaleString(), st.max.toLocaleString())
+    : t('Aguardando telemetria');
+  $$('.tele-games .port').forEach((el) => {
+    const p = st.ports[el.dataset.src];
+    el.className = 'port' + (p ? (p.ok ? ' ok' : ' bad') : '');
+    el.textContent = !on || !p ? '' : p.ok ? t('porta {0}', p.port) : t('porta {0} em uso', p.port);
+    el.hidden = !el.textContent;
+  });
+  if (on && st.live) { ledMask = st.mask; paintLeds(); }
+}
+setInterval(refreshTelemetry, 250);
+
+// ---------- updates ----------
+let upd = { status: 'idle' };
+const mb = (n) => `${(n / 1048576).toFixed(1)} MB`;
+function renderUpdate(st) {
+  upd = st;
+  const pill = $('#updPill');
+  const btn = $('#updAction');
+  const pills = { latest: ['ok', 'atualizado'], available: ['warn', 'disponível'], downloading: ['warn', 'baixando'], ready: ['ok', 'pronto'], error: ['bad', 'erro'] };
+  const [cls, label] = pills[st.status] || ['', '—'];
+  pill.className = 'status-pill ' + cls;
+  pill.textContent = label === '—' ? '—' : t(label);
+  const base = t('Versão instalada: {0}', S ? S.versions.app : '');
+  const lines = {
+    dev: t('Atualizações só funcionam no app instalado.'),
+    idle: base,
+    checking: t('Procurando atualizações…'),
+    latest: `${base} — ${t('Você está na versão mais recente.')}`,
+    available: `${base} — ${t('Versão {0} disponível.', st.version)}`,
+    downloading: t('Baixando… {0}% ({1} de {2})', st.percent, mb(st.transferred || 0), mb(st.total || 0)),
+    ready: t('Pronto para instalar a versão {0}. O app fecha, instala (o Windows pede permissão) e abre de novo.', st.version),
+    error: t('Erro ao atualizar: {0}', st.error),
+  };
+  $('#updText').textContent = lines[st.status] || base;
+  $('#updBar').hidden = st.status !== 'downloading';
+  $('#updBar div').style.width = `${st.percent || 0}%`;
+  $('#updNotes').hidden = !(st.notes && ['available', 'downloading', 'ready'].includes(st.status));
+  $('#updNotes').textContent = st.notes || '';
+  const actions = { available: 'Baixar e instalar', ready: 'Reiniciar e instalar', error: 'Tentar de novo' };
+  btn.textContent = t(actions[st.status] || 'Verificar atualizações');
+  btn.disabled = ['checking', 'downloading', 'dev'].includes(st.status);
+  renderAlert();
+}
+$('#updAction').addEventListener('click', () => {
+  if (upd.status === 'available') hub.downloadUpdate();
+  else if (upd.status === 'ready') hub.installUpdate();
+  else hub.checkUpdate();
+});
+hub.onUpdate(renderUpdate);
 
 // ---------- system / driver ----------
 async function refreshDriver() {
@@ -607,6 +682,7 @@ function esc(s) {
 // ---------- boot ----------
 (async () => {
   applyState(await hub.getState());
+  renderUpdate(await hub.updateState());
   paintLeds();
   refreshDriver();
   requestAnimationFrame(tick);

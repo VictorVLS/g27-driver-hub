@@ -341,6 +341,22 @@ main { flex: 1; overflow-y: auto; position: relative; }
 .led.on.o { background: var(--led-o); box-shadow: 0 0 22px var(--led-o), inset 0 -4px 8px rgba(0,0,0,.25); }
 .led.on.r { background: var(--led-r); box-shadow: 0 0 26px var(--led-r), inset 0 -4px 8px rgba(0,0,0,.25); }
 .field.wide { grid-template-columns: 1fr 56px; }
+.tele-card { margin-top: 18px; }
+.note.top0 { margin-top: 0; margin-bottom: 14px; }
+.tele-status { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 16px; border-radius: 10px; background: var(--bg2); border: 1px solid var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
+.tele-status .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--dim); }
+.tele-status.live .dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.tele-games { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.tele-games > div { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); }
+.tele-games b { font-size: 13px; }
+.tele-games small { grid-column: 1; color: var(--muted); font-size: 12px; }
+.tele-games small b { font-size: 12px; color: var(--text); }
+.tele-games .port { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--line2); color: var(--muted); }
+.tele-games .port.ok { background: rgba(52,209,124,.15); color: var(--ok); }
+.tele-games .port.bad { background: rgba(255,84,104,.15); color: var(--bad); }
+.upd-bar { height: 8px; border-radius: 8px; background: var(--line2); overflow: hidden; margin: 4px 0 6px; }
+.upd-bar div { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.upd-notes { max-height: 150px; margin-top: 10px; font-family: var(--font); font-size: 12px; }
 
 /* ---------- profiles ---------- */
 .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }

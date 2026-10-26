@@ -181,7 +181,23 @@
             <button class="btn ghost" id="ledAll">Acender todos</button>
             <button class="btn ghost" id="ledOff">Apagar</button>
           </div>
-          <p class="note">Em jogo, os LEDs são controlados pelo próprio jogo (rFactor, Assetto Corsa, Dirt, etc.).</p>
+          <p class="note">Jogos com suporte nativo a LEDs Logitech (rFactor, Assetto Corsa, DiRT, F1, Project CARS...) acendem os LEDs sozinhos pelo driver.</p>
+        </div>
+
+        <div class="card led-card tele-card">
+          <div class="card-head">
+            <h3>LEDs pela telemetria do jogo</h3>
+            <label class="switch"><input type="checkbox" data-pref="ledTelemetry" /><span></span></label>
+          </div>
+          <p class="note top0">Para jogos que não acendem os LEDs do G27 sozinhos: o app lê o RPM que o jogo transmite e acende os LEDs como o driver da Logitech faz (piscando no corte).</p>
+          <div class="tele-status" id="teleStatus"><span class="dot"></span><span id="teleText">Aguardando telemetria</span></div>
+          <div class="field wide" data-pref-key="ledStart"><label>Primeiro LED acende em (% do RPM máximo)</label><input type="range" min="40" max="95" class="slider" /><output></output></div>
+          <div class="field wide" data-pref-key="ledRed"><label>Corte / todos piscando em (% do RPM máximo)</label><input type="range" min="70" max="100" class="slider" /><output></output></div>
+          <div class="tele-games">
+            <div><b>Forza Horizon 4/5, Forza Motorsport</b><small>Configurações → HUD e Jogabilidade → Data Out: Ativado, IP 127.0.0.1, porta 5300</small><i class="port" data-src="forza"></i></div>
+            <div><b>BeamNG.drive, Live for Speed</b><small>Opções → OutGauge: ativado, IP 127.0.0.1, porta 4444</small><i class="port" data-src="outgauge"></i></div>
+            <div><b>DiRT Rally, DiRT Rally 2.0, DiRT 4, GRID</b><small>Arquivo hardware_settings_config.xml → udp enabled="true" extradata="3" port="20777"</small><i class="port" data-src="codemasters"></i></div>
+          </div>
         </div>
       </section>
 
@@ -222,6 +238,16 @@
             <div class="toggle-row"><div><b>Iniciar com o Windows</b><small>Abre minimizado na bandeja</small></div><label class="switch"><input type="checkbox" data-pref="startWithWindows" /><span></span></label></div>
             <div class="toggle-row"><div><b>Fechar para a bandeja</b><small>Mantém os perfis automáticos funcionando</small></div><label class="switch"><input type="checkbox" data-pref="minimizeToTray" /><span></span></label></div>
             <div class="toggle-row"><div><b>Modo nativo automático</b><small>Ativa 900° assim que o volante é conectado</small></div><label class="switch"><input type="checkbox" data-pref="autoNative" /><span></span></label></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Atualizações</h3><span class="status-pill" id="updPill">—</span></div>
+            <p class="note top0" id="updText"></p>
+            <div class="upd-bar" id="updBar" hidden><div></div></div>
+            <pre class="log upd-notes" id="updNotes" hidden></pre>
+            <div class="btn-row">
+              <button class="btn primary" id="updAction">Verificar atualizações</button>
+            </div>
+            <div class="toggle-row"><div><b>Verificar ao abrir o app</b><small>Só baixa quando você mandar. Baixa apenas o que mudou entre as versões.</small></div><label class="switch"><input type="checkbox" data-pref="autoUpdate" /><span></span></label></div>
           </div>
           <div class="card">
             <div class="card-head"><h3>Sobre</h3></div>

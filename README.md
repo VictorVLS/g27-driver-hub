@@ -24,6 +24,8 @@ O Logitech G27 não é suportado pelo G HUB, e o software antigo (Logitech Gamin
 | **Perfis por jogo** | Cada jogo tem rotação e FFB próprios; o perfil troca sozinho quando o jogo abre |
 | **Teste de entradas** | Volante, pedais, câmbio H com marcha engatada, todos os botões e D-pad ao vivo; mapeamento de pedais |
 | **LEDs de RPM** | Controle dos 10 LEDs, simulador de RPM e teste |
+| **LEDs pela telemetria** | Acende os LEDs pelo RPM em jogos que não fazem isso sozinhos: Forza Horizon 4/5 e Motorsport (Data Out), BeamNG e Live for Speed (OutGauge), DiRT Rally/2.0/4 e GRID (UDP Codemasters) |
+| **Atualizações** | Pelo app, em Sistema: baixa só o que mudou entre as versões |
 | **Zona morta dos pedais** | Início e fim do curso de cada pedal (0–40%), aplicados pela calibração do DirectInput |
 | **Pedais combinados** | Para jogos antigos que só aceitam acelerador e freio no mesmo eixo |
 | **Driver** | Diagnóstico (dispositivo, filtros, DLL de FFB) e reparo com um clique |
@@ -44,6 +46,8 @@ O Logitech G27 não é suportado pelo G HUB, e o software antigo (Logitech Gamin
 3. O instalador baixa o **Logitech Gaming Software 5.10 oficial direto do servidor da Logitech**, confere o SHA-256 e a assinatura digital da Logitech, extrai **apenas os drivers do volante** e os instala.
 4. Abra o **G27 Driver Hub** e conecte o volante.
 
+**Atualizações:** a partir da 1.1.0, o app avisa quando sai versão nova e atualiza em **Sistema → Atualizações**, baixando só as partes que mudaram (normalmente cerca de 1 MB em vez de 110 MB). Quem tem a 1.0.x precisa instalar a 1.1.0 manualmente uma vez.
+
 **Sem internet?** Instale o app e use **Sistema → Usar lgs510_x64.exe local…** apontando para uma cópia do instalador `lgs510_x64.exe` (SHA-256 `e07a278e…ca76`).
 
 **Requisitos:** Windows 10 ou 11 de 64 bits. Testado com o Logitech G27. O modo de compatibilidade do G25/DFGT/DFP é reconhecido, mas esses volantes ainda não foram testados.
@@ -56,6 +60,16 @@ O Logitech G27 não é suportado pelo G HUB, e o software antigo (Logitech Gamin
 - **Mudanças de FFB valem na próxima vez que o jogo abrir.** O driver da Logitech lê os valores quando o jogo inicializa o volante. A rotação e a mola de centralização mudam na hora.
 - **Zona morta:** a dos pedais vale em jogos que usam DirectInput (a maioria dos simuladores e o Forza Horizon 4). O driver da Logitech não oferece zona morta no centro do volante para o G27; para isso, use a opção do próprio jogo.
 - **"Permitir que o jogo ajuste as configurações":** deixe ligado (recomendado). Desligado, o app reaplica a rotação do perfil enquanto o jogo estiver aberto.
+
+## LEDs de RPM nos jogos
+
+- **Jogos com suporte nativo a LEDs Logitech** (rFactor, Assetto Corsa, DiRT, F1, Project CARS...) acendem os LEDs sozinhos. O comando vai do jogo direto para o driver da Logitech, sem precisar do LGS nem do app aberto.
+- **Jogos sem suporte nativo:** o app lê a telemetria e acende os LEDs, com o mesmo padrão do driver da Logitech (5 etapas e todos piscando no corte). Ative a telemetria no jogo apontando para `127.0.0.1`:
+  - **Forza Horizon 4/5, Forza Motorsport:** Configurações → HUD e Jogabilidade → Data Out, porta `5300`.
+  - **BeamNG.drive, Live for Speed:** OutGauge, porta `4444`.
+  - **DiRT Rally/2.0, DiRT 4, GRID:** em `hardware_settings_config.xml`, `udp enabled="true" extradata="3" port="20777"`.
+
+Se outro programa (por exemplo, o SimHub) já usa a mesma porta, a tela LEDs mostra "porta em uso".
 
 ## Perguntas frequentes
 
@@ -97,7 +111,7 @@ Projeto independente, **sem vínculo com a Logitech**. Logitech, G27 e G HUB sã
 - **Conflict with G HUB.** Only the wheel drivers are installed, never the `LCore.exe` app, so G HUB keeps managing your other Logitech gear and both run side by side.
 - **Wheel stuck at 200° with combined pedals.** The app switches the G27 to native mode (900°, separate pedals, shifter and LEDs) as soon as it is plugged in.
 
-**Features:** rotation from 40° to 900° with a live position readout, FFB strength/spring/damper (0–150%), a centering spring, pedal dead zones (start/end of travel, via DirectInput calibration), per-game profiles that switch automatically, a live input test (wheel, pedals, H-shifter, buttons), RPM LED control, combined pedals, driver diagnostics, a tray icon with start-with-Windows, and Portuguese/English UI.
+**Features:** rotation from 40° to 900° with a live position readout, FFB strength/spring/damper (0–150%), a centering spring, pedal dead zones (start/end of travel, via DirectInput calibration), RPM LEDs from game telemetry (Forza Data Out, OutGauge, Codemasters UDP), differential in-app updates, per-game profiles that switch automatically, a live input test (wheel, pedals, H-shifter, buttons), RPM LED control, combined pedals, driver diagnostics, a tray icon with start-with-Windows, and Portuguese/English UI.
 
 **Install:** download `G27-Driver-Hub-Setup-x.y.z.exe` from [Releases](../../releases) and run it. The installer downloads the official LGS 5.10 package from Logitech's own server, verifies its SHA-256 and Logitech signature, extracts only the wheel drivers and installs them. Offline? Install the app and use **System → Use local lgs510_x64.exe…**. Requires 64-bit Windows 10/11.
 
