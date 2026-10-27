@@ -151,4 +151,4 @@ Requer Node.js 22 ou 24. Os detalhes de como o app fala com o volante e com o dr
 
 ## ⚖️ Aviso legal
 
-Projeto independente, **sem vínculo com a Logitech**. Logitech, G27 e G HUB são marcas da Logitech. Os drivers instalados são software da Logitech, baixados dos servidores da Logitech e regidos pela licença dela. O código deste repositório é distribuído sob a [licença MIT](LICENSE). Use por sua conta e risco.
+Projeto independente, **sem vínculo com a Logitech**. Logitech, G27 e G HUB são marcas da Logitech. Os drivers instalados são software da Logitech, baixados dos servidores da Logitech e regidos pela licença dela. O código deste repositório é distribuído sob a [licença MIT](LICENSE); componentes de terceiros estão em [NOTICE.md](NOTICE.md). Use por sua conta e risco.

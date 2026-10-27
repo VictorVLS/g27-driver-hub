@@ -151,4 +151,4 @@ Requires Node.js 22 or 24. How the app talks to the wheel and the driver (HID co
 
 ## ⚖️ Disclaimer
 
-Independent project, **not affiliated with Logitech**. Logitech, G27 and G HUB are Logitech trademarks. The installed drivers are Logitech software, downloaded from Logitech's servers under Logitech's licence. The source code in this repository is [MIT licensed](LICENSE). Use at your own risk.
+Independent project, **not affiliated with Logitech**. Logitech, G27 and G HUB are Logitech trademarks. The installed drivers are Logitech software, downloaded from Logitech's servers under Logitech's licence. The source code in this repository is [MIT licensed](LICENSE); third-party components are listed in [NOTICE.md](NOTICE.md). Use at your own risk.
