@@ -6,7 +6,7 @@
   <a href="https://github.com/VictorVLS/g27-driver-hub/releases/latest"><img src="https://img.shields.io/github/v/release/VictorVLS/g27-driver-hub?style=for-the-badge&label=version&color=00b8fc" alt="Version"></a>
   <a href="https://github.com/VictorVLS/g27-driver-hub/releases"><img src="https://img.shields.io/github/downloads/VictorVLS/g27-driver-hub/total?style=for-the-badge&label=downloads&color=34d17c" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows 10 and 11">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/VictorVLS/g27-driver-hub?style=for-the-badge&label=license&color=8b94a4" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b94a4?style=for-the-badge" alt="MIT license"></a>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
   &nbsp;·&nbsp; <a href="#-install">Install</a>
   &nbsp;·&nbsp; <a href="#-rpm-leds-in-games">LEDs in games</a>
   &nbsp;·&nbsp; <a href="#-faq">FAQ</a>
-  &nbsp;·&nbsp; <a href="README.md">🇧🇷 Português</a>
+  &nbsp;·&nbsp; <a href="README.md">🌐 Português</a>
 </p>
 
 ---
