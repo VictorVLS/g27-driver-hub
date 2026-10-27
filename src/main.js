@@ -11,7 +11,9 @@ const updater = require('./updater');
 const ROOT = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
 const DRIVER_SCRIPT = path.join(ROOT, 'driver', 'install-driver.ps1');
 const SEVEN_ZIP = path.join(ROOT, 'vendor', '7zip', '7z.exe');
-const ICON = path.join(ROOT, 'assets', 'icon.png');
+// Multi-size .ico: detailed art from 48 px up, simplified art at 16-32 px,
+// so Windows picks the right one for the taskbar, tray and DPI scale.
+const ICON = path.join(ROOT, 'assets', 'icon.ico');
 const CONFIG = path.join(app.getPath('userData'), 'config.json');
 
 const DEFAULT_SETTINGS = {
@@ -182,8 +184,7 @@ function createWindow() {
 }
 
 function createTray() {
-  const img = nativeImage.createFromPath(ICON).resize({ width: 16, height: 16 });
-  tray = new Tray(img);
+  tray = new Tray(nativeImage.createFromPath(ICON));
   tray.setToolTip('G27 Driver Hub');
   const rebuild = () =>
     tray.setContextMenu(Menu.buildFromTemplate([

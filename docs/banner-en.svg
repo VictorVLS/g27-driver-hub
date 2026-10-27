@@ -25,32 +25,8 @@
     <path d="M0 90H1280M0 180H1280M0 270H1280"/>
   </g>
 
-  <!-- wheel -->
-  <g transform="translate(1000 180) rotate(-12)">
-    <circle r="150" fill="#1b1e23" stroke="#2a2f37" stroke-width="2"/>
-    <circle r="136" fill="none" stroke="url(#rim)" stroke-width="28"/>
-    <circle r="123" fill="#0c0e11" opacity=".6"/>
-    <path d="M-128 -8 Q-90 -20 -55 -18 L-47 30 Q-85 30 -124 32 Z" fill="url(#metal)"/>
-    <path d="M128 -8 Q90 -20 55 -18 L47 30 Q85 30 124 32 Z" fill="url(#metal)"/>
-    <path d="M-26 50 L26 50 L18 124 Q0 131 -18 124 Z" fill="url(#metal)"/>
-    <path d="M-55 -36 Q0 -56 55 -36 L62 36 Q50 68 0 73 Q-50 68 -62 36 Z" fill="#15181d" stroke="#2c323b" stroke-width="2"/>
-    <rect x="-55" y="-44" width="110" height="17" rx="6" fill="#0b0d10" stroke="#2a2f37"/>
-    <g>
-      <rect x="-50" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
-      <rect x="-40" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
-      <rect x="-30" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
-      <rect x="-20" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
-      <rect x="-10" y="-41" width="7" height="11" rx="2" fill="#3a1419"/>
-      <rect x="3" y="-41" width="7" height="11" rx="2" fill="#3a1419"/>
-      <rect x="13" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
-      <rect x="23" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
-      <rect x="33" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
-      <rect x="43" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
-    </g>
-    <rect x="-33" y="0" width="66" height="32" rx="8" fill="#0f1215" stroke="#2a2f37"/>
-    <text y="23" text-anchor="middle" fill="#c7ced8" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="18" letter-spacing="1.5">G27</text>
-    <rect x="-5" y="-147" width="10" height="24" rx="3" fill="#00b8fc"/>
-  </g>
+  <!-- app icon -->
+  <image href="../assets/icon.svg" x="850" y="30" width="300" height="300"/>
 
   <!-- text -->
   <text x="72" y="140" fill="#00b8fc" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="64" letter-spacing="2">G27</text>

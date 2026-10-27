@@ -9,3 +9,6 @@ out/
 *.cat
 *.inf
 lgs510*.exe
+
+# icon design drafts
+assets/icon-options/
