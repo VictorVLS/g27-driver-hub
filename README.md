@@ -1,122 +1,154 @@
-# G27 Driver Hub
+<p align="center">
+  <img src="docs/banner.png" alt="G27 Driver Hub" width="100%">
+</p>
 
-**Painel moderno, estilo G HUB, para o volante Logitech G27 — com instalação e reparo automático do driver.**
-*A modern, G HUB-style control panel for the Logitech G27 wheel, with automatic driver install and repair. [English below](#english).*
+<p align="center">
+  <a href="https://github.com/VictorVLS/g27-driver-hub/releases/latest"><img src="https://img.shields.io/github/v/release/VictorVLS/g27-driver-hub?style=for-the-badge&label=vers%C3%A3o&color=00b8fc" alt="Versão"></a>
+  <a href="https://github.com/VictorVLS/g27-driver-hub/releases"><img src="https://img.shields.io/github/downloads/VictorVLS/g27-driver-hub/total?style=for-the-badge&label=downloads&color=34d17c" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows 10 e 11">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/VictorVLS/g27-driver-hub?style=for-the-badge&label=licen%C3%A7a&color=8b94a4" alt="Licença MIT"></a>
+</p>
 
-![Início](docs/screenshots/view-home.png)
+<p align="center">
+  <a href="https://github.com/VictorVLS/g27-driver-hub/releases/latest"><b>⬇️ Baixar a versão mais recente</b></a>
+  &nbsp;·&nbsp; <a href="#-recursos">Recursos</a>
+  &nbsp;·&nbsp; <a href="#-instalação">Instalação</a>
+  &nbsp;·&nbsp; <a href="#-leds-de-rpm-nos-jogos">LEDs nos jogos</a>
+  &nbsp;·&nbsp; <a href="#-perguntas-frequentes">Perguntas</a>
+  &nbsp;·&nbsp; <a href="README.en.md">🇺🇸 English</a>
+</p>
 
-O Logitech G27 não é suportado pelo G HUB, e o software antigo (Logitech Gaming Software 5.10) é de 2010, tem uma interface ultrapassada e briga com o G HUB. O G27 Driver Hub resolve isso: instala só os drivers originais do volante e entrega uma interface nova, em português e inglês.
+---
 
-## Problemas que ele resolve
+O **Logitech G27** não é suportado pelo G HUB, e o software antigo (Logitech Gaming Software 5.10, de 2010) tem uma interface ultrapassada e briga com o G HUB. O **G27 Driver Hub** instala só os drivers originais do volante e entrega um painel moderno, no estilo do G HUB, em português e inglês.
 
-- **Volante com erro "código 39" / sem Force Feedback** depois de desinstalar ou atualizar o LGS. Uma desinstalação antiga costuma apagar o `WmFilter.sys` e deixar o driver quebrado. O botão **Instalar / reparar driver** reinstala tudo com um clique.
-- **Conflito com o G HUB.** O LGS completo roda o `LCore.exe`, que disputa os periféricos Logitech com o G HUB, e o G HUB fecha o LGS. O G27 Driver Hub instala **só os drivers do volante**, sem o `LCore.exe`. O G HUB continua cuidando do seu mouse e teclado, e os dois rodam juntos.
-- **Volante preso em 200° / pedais combinados** (modo de compatibilidade). O app ativa o modo nativo (900°, pedais separados, câmbio e LEDs) assim que o volante é conectado.
-- **Interface velha e confusa.** Tudo fica em uma tela só, aplicado na hora, sem botão "Aplicar".
+<p align="center">
+  <img src="docs/screenshots/pt/home.png" alt="Tela inicial" width="88%">
+</p>
 
-## Recursos
+## ✅ O que ele resolve
+
+| Problema | Como fica |
+|---|---|
+| Volante com **erro "código 39"** ou **sem Force Feedback** depois de desinstalar ou atualizar o LGS | Um clique em **Instalar / reparar driver** reinstala tudo |
+| **Conflito com o G HUB** (o LGS roda o `LCore.exe`, e o G HUB fecha o LGS) | Instala **só os drivers do volante**: G HUB e G27 Driver Hub rodam juntos |
+| Volante preso em **200°** e pedais combinados | Ativa o **modo nativo** sozinho (900°, pedais separados, câmbio e LEDs) e liga em 900° mesmo sem o app aberto |
+| Centralização que para **longe do centro** | Mola recalibrada com medições no volante: para a 2–5° do centro |
+| Interface velha e confusa | Tudo aplicado na hora, sem botão "Aplicar" |
+
+## 🖼️ Telas
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/pt/wheel.png" alt="Volante"><br><b>Volante</b>: rotação com a posição real, Force Feedback e centralização</td>
+    <td width="50%"><img src="docs/screenshots/pt/wheel-deadzone.png" alt="Zona morta"><br><b>Zona morta dos pedais</b>: início e fim do curso de cada pedal</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pt/inputs.png" alt="Entradas"><br><b>Entradas</b>: volante, pedais, câmbio H e botões ao vivo</td>
+    <td><img src="docs/screenshots/pt/leds.png" alt="LEDs"><br><b>LEDs de RPM</b>: acesos pela telemetria do Forza</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pt/profiles.png" alt="Perfis"><br><b>Perfis por jogo</b>: trocam sozinhos quando o jogo abre</td>
+    <td><img src="docs/screenshots/pt/system-updates.png" alt="Sistema"><br><b>Sistema</b>: driver, preferências e atualizações</td>
+  </tr>
+</table>
+
+## 🎮 Recursos
 
 | | |
 |---|---|
 | **Rotação** | 40° a 900°, com atalhos (180/270/360/540/720/900) e a posição do volante ao vivo |
-| **Force Feedback** | Força geral, mola e amortecimento (0–150%), mola de centralização nos jogos e teste dos motores |
-| **Mola fora dos jogos** | Centralização do firmware ajustável ou desligada |
-| **Perfis por jogo** | Cada jogo tem rotação e FFB próprios; o perfil troca sozinho quando o jogo abre |
-| **Teste de entradas** | Volante, pedais, câmbio H com marcha engatada, todos os botões e D-pad ao vivo; mapeamento de pedais |
-| **LEDs de RPM** | Controle dos 10 LEDs, simulador de RPM e teste |
-| **LEDs pela telemetria** | Acende os LEDs pelo RPM em jogos que não fazem isso sozinhos: Forza Horizon 4/5 e Motorsport (Data Out), BeamNG e Live for Speed (OutGauge), DiRT Rally/2.0/4 e GRID (UDP Codemasters) |
-| **Atualizações** | Pelo app, em Sistema: baixa só o que mudou entre as versões |
-| **Zona morta dos pedais** | Início e fim do curso de cada pedal (0–40%), aplicados pela calibração do DirectInput |
+| **Force Feedback** | Força geral, mola e amortecimento (0–150%), mola nos jogos e teste dos motores |
+| **Centralização** | Mola do firmware fora dos jogos, ajustável ou desligada |
+| **Zona morta dos pedais** | Início e fim do curso de acelerador, freio e embreagem (0–40%) |
+| **Perfis por jogo** | Rotação, FFB e zona morta próprios; troca automática quando o jogo abre |
+| **Teste de entradas** | Volante, pedais, câmbio com a marcha engatada, botões e D-pad; mapeamento de pedais |
+| **LEDs de RPM** | Controle manual, simulador e LEDs pela telemetria dos jogos |
 | **Pedais combinados** | Para jogos antigos que só aceitam acelerador e freio no mesmo eixo |
-| **Driver** | Diagnóstico (dispositivo, filtros, DLL de FFB) e reparo com um clique |
-| **Bandeja do Windows** | Inicia com o Windows e troca de perfil em segundo plano |
-| **Idiomas** | Português (Brasil) e inglês |
+| **Driver** | Diagnóstico completo e reparo com um clique |
+| **Atualizações** | Pelo próprio app, baixando só o que mudou (≈1 MB em vez de 110 MB) |
+| **Bandeja e idiomas** | Inicia com o Windows, roda na bandeja; português e inglês |
 
-<p>
-<img src="docs/screenshots/view-wheel.png" width="49%" alt="Volante">
-<img src="docs/screenshots/view-inputs.png" width="49%" alt="Entradas">
-<img src="docs/screenshots/view-leds.png" width="49%" alt="LEDs">
-<img src="docs/screenshots/view-profiles.png" width="49%" alt="Perfis">
-</p>
+## 📥 Instalação
 
-## Instalação
-
-1. Baixe o `G27-Driver-Hub-Setup-x.y.z.exe` na página de [Releases](../../releases).
+1. Baixe o **`G27-Driver-Hub-Setup-x.y.z.exe`** na [página de versões](https://github.com/VictorVLS/g27-driver-hub/releases/latest).
 2. Rode o instalador e aceite o pedido de administrador do Windows (necessário para instalar driver).
-3. O instalador baixa o **Logitech Gaming Software 5.10 oficial direto do servidor da Logitech**, confere o SHA-256 e a assinatura digital da Logitech, extrai **apenas os drivers do volante** e os instala.
+3. O instalador baixa o **LGS 5.10 oficial direto do servidor da Logitech**, confere o SHA-256 e a assinatura digital da Logitech e instala **só os drivers do volante**.
 4. Abra o **G27 Driver Hub** e conecte o volante.
 
-**Atualizações:** a partir da 1.1.0, o app avisa quando sai versão nova e atualiza em **Sistema → Atualizações**, baixando só as partes que mudaram (normalmente cerca de 1 MB em vez de 110 MB). Quem tem a 1.0.x precisa instalar a 1.1.0 manualmente uma vez.
+> [!NOTE]
+> O Windows pode mostrar o aviso do **SmartScreen**, porque o instalador não tem assinatura digital paga. Clique em **Mais informações → Executar assim mesmo**.
 
-**Sem internet?** Instale o app e use **Sistema → Usar lgs510_x64.exe local…** apontando para uma cópia do instalador `lgs510_x64.exe` (SHA-256 `e07a278e…ca76`).
+<details>
+<summary><b>Sem internet?</b></summary>
 
-**Requisitos:** Windows 10 ou 11 de 64 bits. Testado com o Logitech G27. O modo de compatibilidade do G25/DFGT/DFP é reconhecido, mas esses volantes ainda não foram testados.
+Instale o app e use **Sistema → Usar lgs510_x64.exe local…**, apontando para uma cópia do instalador `lgs510_x64.exe` (SHA-256 `e07a278e…ca76`).
+</details>
 
-> O Windows pode mostrar o aviso do SmartScreen, porque o instalador não tem assinatura digital paga. Clique em **Mais informações → Executar assim mesmo**.
+<details>
+<summary><b>Atualizações</b></summary>
 
-## Dicas
+A partir da 1.1.0, o app avisa quando sai uma versão nova e atualiza em **Sistema → Atualizações**, baixando só as partes que mudaram. Numa atualização, o driver não é reinstalado se estiver saudável, então o volante não reinicia. Quem está na 1.0.x precisa instalar a versão nova manualmente uma vez.
+</details>
 
-- **Força geral do app × escala do jogo:** as duas se multiplicam. Exemplo real: no Forza Horizon 4 a "Escala do Force Feedback" estava em 4%, e o volante parecia sem FFB. Ajuste primeiro no jogo e use o app para o ajuste fino ou para um perfil só daquele jogo.
-- **Mudanças de FFB valem na próxima vez que o jogo abrir.** O driver da Logitech lê os valores quando o jogo inicializa o volante. A rotação e a mola de centralização mudam na hora.
-- **Zona morta:** a dos pedais vale em jogos que usam DirectInput (a maioria dos simuladores e o Forza Horizon 4). O driver da Logitech não oferece zona morta no centro do volante para o G27; para isso, use a opção do próprio jogo.
-- **"Permitir que o jogo ajuste as configurações":** deixe ligado (recomendado). Desligado, o app reaplica a rotação do perfil enquanto o jogo estiver aberto.
+**Requisitos:** Windows 10 ou 11 de 64 bits e um Logitech G27. O G25, o DFGT e o DFP são reconhecidos, mas ainda não foram testados.
 
-## LEDs de RPM nos jogos
+## 💡 LEDs de RPM nos jogos
 
-- **Jogos com suporte nativo a LEDs Logitech** (rFactor, Assetto Corsa, DiRT, F1, Project CARS...) acendem os LEDs sozinhos. O comando vai do jogo direto para o driver da Logitech, sem precisar do LGS nem do app aberto.
-- **Jogos sem suporte nativo:** o app lê a telemetria e acende os LEDs, com o mesmo padrão do driver da Logitech (5 etapas e todos piscando no corte). Ative a telemetria no jogo apontando para `127.0.0.1`:
-  - **Forza Horizon 4/5, Forza Motorsport:** Configurações → HUD e Jogabilidade → Data Out, porta `5300`.
-  - **BeamNG.drive, Live for Speed:** OutGauge, porta `4444`.
-  - **DiRT Rally/2.0, DiRT 4, GRID:** em `hardware_settings_config.xml`, `udp enabled="true" extradata="3" port="20777"`.
+**Jogos com suporte nativo a LEDs Logitech** (rFactor, Assetto Corsa, DiRT, F1, Project CARS…) acendem os LEDs sozinhos. O comando vai do jogo direto para o driver da Logitech, sem precisar do LGS nem do app aberto.
 
-Se outro programa (por exemplo, o SimHub) já usa a mesma porta, a tela LEDs mostra "porta em uso".
+**Para os outros jogos**, o app lê a telemetria e acende os LEDs com o mesmo padrão do driver da Logitech (5 etapas e todos piscando no corte). Ative a telemetria no jogo apontando para **`127.0.0.1`**:
 
-## Perguntas frequentes
+| Jogo | Onde ativar | Porta |
+|---|---|---|
+| **Forza Horizon 4/5, Forza Motorsport** | Configurações → HUD e Jogabilidade → **Data Out** | `5300` |
+| **BeamNG.drive, Live for Speed** | Opções → **OutGauge** | `4444` |
+| **DiRT Rally/2.0, DiRT 4, GRID** | `hardware_settings_config.xml` → `udp enabled="true" extradata="3"` | `20777` |
 
-**Dá para o G HUB reconhecer o G27?** Não de forma confiável. O banco de dispositivos do G HUB só tem G29, G920 e G923, e os recursos de volante dele passam por um driver próprio que não existe para o G27. Por isso o G27 Driver Hub roda **ao lado** do G HUB.
+Se outro programa (por exemplo, o SimHub) já usa a mesma porta, a tela **LEDs** mostra "porta em uso".
 
-**O app inclui arquivos da Logitech?** Não. A licença do LGS proíbe redistribuição, então este repositório e os instaladores não têm nenhum arquivo da Logitech. O driver é baixado do servidor da própria Logitech no seu PC.
+## 🔧 Dicas
 
-**Preciso deixar o app aberto?** Só para os perfis automáticos e a mola fora dos jogos. O Force Feedback nos jogos funciona com o driver, mesmo com o app fechado.
+- **Força do FFB:** a escala de Force Feedback do jogo e a "Força geral" do app se multiplicam. Ajuste primeiro no jogo. Exemplo real: no Forza Horizon 4 a escala estava em 4%, e o volante parecia sem FFB.
+- **Mudanças de FFB e de zona morta valem na próxima vez que o jogo abrir.** A rotação e a centralização mudam na hora.
+- **Pedal "folgado"** (fica em 1–3% depois de solto): veja em **Entradas** se a barra volta a 0%. Se não voltar, use **Zona morta → Início do curso** com 3–5%.
 
-## Como funciona
+## ❓ Perguntas frequentes
 
-O app conversa com o volante por HID (rotação, centralização, LEDs e modo nativo) e grava as configurações de FFB onde o driver da Logitech as lê. Os detalhes estão em [docs/TECHNICAL.md](docs/TECHNICAL.md).
+<details>
+<summary><b>Dá para o G HUB reconhecer o G27?</b></summary>
 
-### Compilar a partir do código
+Não de forma confiável. O banco de dispositivos do G HUB só tem G29, G920 e G923, e os recursos de volante dele passam por um driver próprio que não existe para o G27. Por isso o G27 Driver Hub roda **ao lado** do G HUB.
+</details>
+
+<details>
+<summary><b>O app inclui arquivos da Logitech?</b></summary>
+
+Não. A licença do LGS proíbe redistribuição, então este repositório e os instaladores não têm nenhum arquivo da Logitech. O driver é baixado do servidor da própria Logitech, no seu PC.
+</details>
+
+<details>
+<summary><b>Preciso deixar o app aberto?</b></summary>
+
+Só para os perfis automáticos, a mola fora dos jogos e os LEDs pela telemetria. O Force Feedback e a zona morta dos pedais funcionam com o driver, mesmo com o app fechado.
+</details>
+
+<details>
+<summary><b>Dá para ter zona morta no centro do volante?</b></summary>
+
+Não por este caminho: nem o firmware do G27 nem o driver da Logitech oferecem isso. Use a opção de zona morta do próprio jogo.
+</details>
+
+## 🛠️ Para desenvolvedores
 
 ```bash
 npm install
 npm start        # roda em modo de desenvolvimento
-npm run dist     # gera dist/G27-Driver-Hub-Setup-x.y.z.exe
+npm run dist     # gera o instalador em dist/
 ```
 
-Requer Node.js 22 ou 24. O `npm run dist` baixa o 7-Zip oficial (usado pelo instalador para abrir o pacote da Logitech) e gera o instalador NSIS.
+Requer Node.js 22 ou 24. Os detalhes de como o app fala com o volante e com o driver (comandos HID, registro, calibração do DirectInput, telemetria e atualizações) estão em [docs/TECHNICAL.md](docs/TECHNICAL.md).
 
-## Aviso legal
+## ⚖️ Aviso legal
 
 Projeto independente, **sem vínculo com a Logitech**. Logitech, G27 e G HUB são marcas da Logitech. Os drivers instalados são software da Logitech, baixados dos servidores da Logitech e regidos pela licença dela. O código deste repositório é distribuído sob a [licença MIT](LICENSE). Use por sua conta e risco.
-
----
-
-## English
-
-**G27 Driver Hub** is a modern control panel for the Logitech G27 racing wheel. G HUB does not support the G27, and the old Logitech Gaming Software 5.10 is outdated and conflicts with G HUB.
-
-![Wheel](docs/screenshots/en/view-wheel.png)
-
-**What it fixes**
-
-- **"Code 39" / no force feedback** after uninstalling or updating LGS (a leftover service with a deleted `WmFilter.sys`). **Install / repair driver** fixes it in one click.
-- **Conflict with G HUB.** Only the wheel drivers are installed, never the `LCore.exe` app, so G HUB keeps managing your other Logitech gear and both run side by side.
-- **Wheel stuck at 200° with combined pedals.** The app switches the G27 to native mode (900°, separate pedals, shifter and LEDs) as soon as it is plugged in.
-
-**Features:** rotation from 40° to 900° with a live position readout, FFB strength/spring/damper (0–150%), a centering spring, pedal dead zones (start/end of travel, via DirectInput calibration), RPM LEDs from game telemetry (Forza Data Out, OutGauge, Codemasters UDP), differential in-app updates, per-game profiles that switch automatically, a live input test (wheel, pedals, H-shifter, buttons), RPM LED control, combined pedals, driver diagnostics, a tray icon with start-with-Windows, and Portuguese/English UI.
-
-**Install:** download `G27-Driver-Hub-Setup-x.y.z.exe` from [Releases](../../releases) and run it. The installer downloads the official LGS 5.10 package from Logitech's own server, verifies its SHA-256 and Logitech signature, extracts only the wheel drivers and installs them. Offline? Install the app and use **System → Use local lgs510_x64.exe…**. Requires 64-bit Windows 10/11.
-
-**Tip:** in-game FFB scale and the app's overall strength multiply. Set the game first (e.g. Forza Horizon 4's "Force Feedback Scale"). FFB changes apply the next time the game starts.
-
-**Build:** `npm install`, then `npm start` or `npm run dist`. See [docs/TECHNICAL.md](docs/TECHNICAL.md) for how it talks to the wheel and driver.
-
-**Disclaimer:** independent project, not affiliated with Logitech. Logitech, G27 and G HUB are Logitech trademarks. No Logitech files are included in this repository or its releases; the drivers are downloaded from Logitech under Logitech's license. The source code is [MIT licensed](LICENSE).

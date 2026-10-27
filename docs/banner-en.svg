@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0d10"/>
+      <stop offset="1" stop-color="#121821"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.5" r="0.45">
+      <stop offset="0" stop-color="#00b8fc" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#00b8fc" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b3037"/>
+      <stop offset="0.5" stop-color="#16191e"/>
+      <stop offset="1" stop-color="#23272e"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a616c"/>
+      <stop offset="0.45" stop-color="#9aa2ad"/>
+      <stop offset="1" stop-color="#3f454e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="360" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="360" rx="24" fill="url(#glow)"/>
+  <g stroke="#1b2129" stroke-width="1">
+    <path d="M0 90H1280M0 180H1280M0 270H1280"/>
+  </g>
+
+  <!-- wheel -->
+  <g transform="translate(1000 180) rotate(-12)">
+    <circle r="150" fill="#1b1e23" stroke="#2a2f37" stroke-width="2"/>
+    <circle r="136" fill="none" stroke="url(#rim)" stroke-width="28"/>
+    <circle r="123" fill="#0c0e11" opacity=".6"/>
+    <path d="M-128 -8 Q-90 -20 -55 -18 L-47 30 Q-85 30 -124 32 Z" fill="url(#metal)"/>
+    <path d="M128 -8 Q90 -20 55 -18 L47 30 Q85 30 124 32 Z" fill="url(#metal)"/>
+    <path d="M-26 50 L26 50 L18 124 Q0 131 -18 124 Z" fill="url(#metal)"/>
+    <path d="M-55 -36 Q0 -56 55 -36 L62 36 Q50 68 0 73 Q-50 68 -62 36 Z" fill="#15181d" stroke="#2c323b" stroke-width="2"/>
+    <rect x="-55" y="-44" width="110" height="17" rx="6" fill="#0b0d10" stroke="#2a2f37"/>
+    <g>
+      <rect x="-50" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
+      <rect x="-40" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
+      <rect x="-30" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
+      <rect x="-20" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
+      <rect x="-10" y="-41" width="7" height="11" rx="2" fill="#3a1419"/>
+      <rect x="3" y="-41" width="7" height="11" rx="2" fill="#3a1419"/>
+      <rect x="13" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
+      <rect x="23" y="-41" width="7" height="11" rx="2" fill="#ffae1a"/>
+      <rect x="33" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
+      <rect x="43" y="-41" width="7" height="11" rx="2" fill="#36e27a"/>
+    </g>
+    <rect x="-33" y="0" width="66" height="32" rx="8" fill="#0f1215" stroke="#2a2f37"/>
+    <text y="23" text-anchor="middle" fill="#c7ced8" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="18" letter-spacing="1.5">G27</text>
+    <rect x="-5" y="-147" width="10" height="24" rx="3" fill="#00b8fc"/>
+  </g>
+
+  <!-- text -->
+  <text x="72" y="140" fill="#00b8fc" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="64" letter-spacing="2">G27</text>
+  <text x="222" y="140" fill="#e9edf2" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="64">Driver Hub</text>
+  <text x="74" y="192" fill="#8b94a4" font-family="Segoe UI, Arial, sans-serif" font-size="25">The modern control panel the Logitech G27 deserves.</text>
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600">
+    <rect x="74" y="232" width="150" height="38" rx="19" fill="#0f2a36" stroke="#00b8fc" stroke-opacity=".5"/>
+    <text x="149" y="257" text-anchor="middle" fill="#4fd5ff">Native 900°</text>
+    <rect x="236" y="232" width="186" height="38" rx="19" fill="#0f2a36" stroke="#00b8fc" stroke-opacity=".5"/>
+    <text x="329" y="257" text-anchor="middle" fill="#4fd5ff">Force Feedback</text>
+    <rect x="434" y="232" width="170" height="38" rx="19" fill="#0f2a36" stroke="#00b8fc" stroke-opacity=".5"/>
+    <text x="519" y="257" text-anchor="middle" fill="#4fd5ff">RPM LEDs</text>
+    <rect x="616" y="232" width="196" height="38" rx="19" fill="#0f2a36" stroke="#00b8fc" stroke-opacity=".5"/>
+    <text x="714" y="257" text-anchor="middle" fill="#4fd5ff">Works with G HUB</text>
+  </g>
+</svg>
