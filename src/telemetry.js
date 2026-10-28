@@ -45,6 +45,7 @@ function parseCodemasters(b) {
 
 // Logitech's mapping: masks 1, 3, 7, F, 1F, 1F across [first, red).
 const STEPS = [0x01, 0x03, 0x07, 0x0f, 0x1f, 0x1f];
+const LIMIT_HOLD_MS = 300; // how long the red-line blink outlives the last red-line packet
 function ledMask(rpm, first, red, blinkOn) {
   if (rpm < first) return 0;
   if (rpm < red) return STEPS[Math.min(5, Math.floor(((rpm - first) / (red - first)) * 6))];
@@ -59,7 +60,8 @@ class Telemetry extends EventEmitter {
     this.last = null; // { source, rpm, max, at }
     this.opts = { start: 75, red: 95 };
     this.mask = -1;
-    this.blink = { on: true, at: 0 };
+    this.blinkFrom = 0;
+    this.limitUntil = 0;
     this.timer = null;
   }
 
@@ -78,7 +80,7 @@ class Telemetry extends EventEmitter {
       sock.bind(src.port, '0.0.0.0', () => { this.ports[id] = { port: src.port, ok: true }; });
       this.sockets.set(id, sock);
     }
-    if (!this.timer) this.timer = setInterval(() => this.tick(), 50);
+    if (!this.timer) this.timer = setInterval(() => this.tick(), 20);
   }
 
   stop() {
@@ -107,10 +109,19 @@ class Telemetry extends EventEmitter {
       return;
     }
     const { rpm, max, shiftLight } = this.last;
-    if (now - this.blink.at >= 150) { this.blink.on = !this.blink.on; this.blink.at = now; }
     const first = max * (this.opts.start / 100);
     const red = max * (this.opts.red / 100);
-    const mask = shiftLight ? (this.blink.on ? 0x1f : 0) : ledMask(rpm, first, red, this.blink.on);
+    // On the rev limiter the RPM bounces across the red line many times a
+    // second; latch the blink for a moment so it keeps a steady rhythm instead
+    // of flickering between "all on" and "blinking".
+    if (shiftLight || rpm >= red) {
+      if (now >= this.limitUntil) this.blinkFrom = now; // start each blink run lit
+      this.limitUntil = now + LIMIT_HOLD_MS;
+    }
+    const limiting = now < this.limitUntil;
+    // Phase from the clock, not a toggle per tick, so timer jitter cannot drift it.
+    const blinkOn = Math.floor((now - this.blinkFrom) / 150) % 2 === 0;
+    const mask = limiting ? (blinkOn ? 0x1f : 0) : ledMask(rpm, first, red, true);
     if (mask !== this.mask) this.setMask(mask);
   }
 

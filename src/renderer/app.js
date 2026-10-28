@@ -591,9 +591,10 @@ async function refreshTelemetry() {
     el.textContent = !on || !p ? '' : p.ok ? t('porta {0}', p.port) : t('porta {0} em uso', p.port);
     el.hidden = !el.textContent;
   });
-  if (on && st.live) { ledMask = st.mask; paintLeds(); }
 }
 setInterval(refreshTelemetry, 250);
+// Telemetry LED changes arrive as events so the on-screen blink matches the wheel.
+hub.onLeds((mask) => { ledMask = mask; paintLeds(); });
 
 // ---------- updates ----------
 let upd = { status: 'idle' };

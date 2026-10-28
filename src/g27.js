@@ -25,8 +25,10 @@ class G27 extends EventEmitter {
     this.queue = Promise.resolve();
   }
 
-  static find() {
-    const list = HID.devices().filter((d) => d.vendorId === VENDOR && MODELS[d.productId]);
+  // Async enumeration: the sync HID.devices() blocks the main process for
+  // ~400 ms on Windows, which stalled the telemetry LED blink once a second.
+  static async find() {
+    const list = (await HID.devicesAsync()).filter((d) => d.vendorId === VENDOR && MODELS[d.productId]);
     // Prefer the joystick top-level collection when the device exposes several.
     return list.find((d) => d.usagePage === 1 && d.usage === 4) || list[0] || null;
   }
@@ -48,8 +50,11 @@ class G27 extends EventEmitter {
   }
 
   // Opens the wheel if present; returns true when the connection state changed.
-  poll() {
-    const found = G27.find();
+  async poll() {
+    if (this.polling) return false;
+    this.polling = true;
+    let found;
+    try { found = await G27.find(); } catch { return false; } finally { this.polling = false; }
     if (this.dev && (!found || found.path !== this.info.path)) {
       this.close();
       this.emit('change', this.status());

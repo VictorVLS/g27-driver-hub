@@ -53,6 +53,7 @@ let autoProfileId = null; // profile selected by the process watcher, if any
 const wheel = new G27();
 const telemetry = new Telemetry();
 telemetry.on('leds', (mask) => {
+  send('leds', mask);
   if (wheel.connected && wheel.status().native) wheel.setLeds(mask).catch(() => {});
 });
 

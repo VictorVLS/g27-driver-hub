@@ -38,4 +38,5 @@ contextBridge.exposeInMainWorld('hub', {
   onState: on('state'),
   onToast: on('toast'),
   onUpdate: on('update'),
+  onLeds: on('leds'),
 });

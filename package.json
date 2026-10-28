@@ -1,7 +1,7 @@
 {
   "name": "g27-driver-hub",
   "productName": "G27 Driver Hub",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Painel moderno estilo G HUB para o volante Logitech G27, com instalação e reparo automático do driver",
   "author": "Victor Vinicius",
   "license": "MIT",
